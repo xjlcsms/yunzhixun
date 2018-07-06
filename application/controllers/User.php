@@ -69,7 +69,7 @@ class UserController extends \Base\ApplicationController
         $select->order(array('created_at desc'));
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
-        $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());var_dump($pager->getList());die();
+        $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
         $this->assign('userid',$userid);
         $this->assign('acount',$acount);
@@ -89,8 +89,8 @@ class UserController extends \Base\ApplicationController
         $passward = $this->getParam('password','','string');
         $companyName = $this->getParam('companyName','','string');
         $type = $this->getParam('type',0,'int');
-        $access_key = $this->getParam('access_key','','string');
-        $secret = $this->getParam('secret','','string');
+        $account = $this->getParam('account','','string');
+        $rawPassword = $this->getParam('rawPassword','','string');
         if(empty($username) || empty($passward)|| empty($access_key)|| empty($secret)|| empty($companyName)){
             return $this->returnData('数据不能为空',21000);
         }
@@ -145,6 +145,54 @@ class UserController extends \Base\ApplicationController
             return $this->returnData('充值失败，请重试!',21008);
         }
         return $this->returnData('充值成功',21009,true);
+    }
+
+    /**
+     * 回退
+     * @return false
+     */
+    public function rebackAction(){
+        $userid = $this->getParam('userid',0,'int');
+        $reback = $this->getParam('reback',0,'int');
+        $mapper = \Mapper\UsersModel::getInstance();
+        $user = $mapper->findById($userid);
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('回退用户不存在',21010);
+        }
+        if(empty($reback)){
+            return $this->returnData('回退数量不能为零',21012);
+        }
+        $update = array(
+            'normal_balance'=>'normal_balance-'.$reback,
+            'marketing_balance'=>'marketing_balance-'.$reback,
+            'show_normal_balance'=>'show_normal_balance-'.$reback,
+            'show_marketing_balance'=>'show_marketing_balance-'.$reback,
+        );
+        $where = array('id'=>$userid);
+        $res = $mapper->update($update,$where);
+        if(!$res){
+            return $this->returnData('回退失败，请重试!',21013);
+        }
+        return $this->returnData('回退成功',21011,true);
+    }
+
+    /**
+     * 重置密码
+     * @return false
+     */
+    public function resetpwdAction(){
+        $userid = $this->getParam('userid',0,'int');
+        $resetPwd = $this->getParam('resetPwd','','string');
+        $mapper = \Mapper\UsersModel::getInstance();
+        $user = $mapper->findById($userid);
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('用户不存在',21014);
+        }
+        if(empty($resetPwd) || strlen($resetPwd)<6){
+            return $this->returnData('密码长度至少六位',21015);
+        }
+        
+        return $this->returnData('修改成功',21016);
     }
 
 
