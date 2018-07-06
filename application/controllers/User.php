@@ -138,6 +138,7 @@ class UserController extends \Base\ApplicationController
             'marketing_balance'=>'marketing_balance+'.$recharge,
             'show_normal_balance'=>'show_normal_balance+'.$recharge,
             'show_marketing_balance'=>'show_marketing_balance+'.$recharge,
+            'updated_at'=>date('Y-m-d H:i:s'),
             );
         $where = array('id'=>$userid);
         $res = $mapper->update($update,$where);
@@ -167,6 +168,7 @@ class UserController extends \Base\ApplicationController
             'marketing_balance'=>'marketing_balance-'.$reback,
             'show_normal_balance'=>'show_normal_balance-'.$reback,
             'show_marketing_balance'=>'show_marketing_balance-'.$reback,
+            'updated_at'=>date('Y-m-d H:i:s'),
         );
         $where = array('id'=>$userid);
         $res = $mapper->update($update,$where);
@@ -191,9 +193,38 @@ class UserController extends \Base\ApplicationController
         if(empty($resetPwd) || strlen($resetPwd)<6){
             return $this->returnData('密码长度至少六位',21015);
         }
-        
+        $user->setRaw_password($resetPwd);
+        $user->setUpdated_at(date('Y-m-d H:i:s'));
+        $res  = $mapper->update($user);
+        if(!$res){
+            return $this->returnData('重置密码失败，请重试',21017);
+        }
         return $this->returnData('修改成功',21016);
     }
 
+
+    /**
+     * 删除用户
+     * @return false
+     */
+    public function delAction(){
+        $surePwd = $this->getParam('surePwd','','string');
+        $userid = $this->getParam('userid',0,'int');
+        $mapper = \Mapper\UsersModel::getInstance();
+        $user = $mapper->findById($userid);
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('用户不存在',21020);
+        }
+        $business = \Business\LoginModel::getInstance();
+        $admin = $business->getCurrentUser();
+        if (\Ku\Tool::valid($surePwd, $admin->getPassword(), null) === false) {
+            return $this->returnData('原密码错误，请重新输入',21022);
+        }
+        $res = $mapper->del(array('id'=>$userid));
+        if(!$res){
+            return $this->returnData('删除失败，请重试',21023);
+        }
+        return $this->returnData('删除成功',21021);
+    }
 
 }
