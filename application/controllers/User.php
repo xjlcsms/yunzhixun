@@ -193,7 +193,7 @@ class UserController extends \Base\ApplicationController
         if(empty($resetPwd) || strlen($resetPwd)<6){
             return $this->returnData('密码长度至少六位',21015);
         }
-        $user->setRaw_password($resetPwd);
+        $user->setPassword(Ku\Tool::encryption($resetPwd));
         $user->setUpdated_at(date('Y-m-d H:i:s'));
         $res  = $mapper->update($user);
         if(!$res){

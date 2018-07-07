@@ -7,6 +7,7 @@ final class Adapter {
     protected $_initSmser = array(
         'runyuan' => '润圆',
         'xuanwu' => '玄武',
+        'yunzhixun' => '云之讯',
     );
 
     protected $_smser = null;
