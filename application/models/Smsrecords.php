@@ -103,6 +103,26 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     protected $_status = 0;
 
     /**
+     * Created_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_created_at = 0;
+
+    /**
+     * Updated_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_updated_at = 0;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -352,6 +372,60 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * Created_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @param int $created_at
+     * @return \SmsrecordsModel
+     */
+    public function setCreated_at($created_at) {
+        $this->_created_at = (int)$created_at;
+        $this->_params['created_at'] = (int)$created_at;
+        return $this;
+    }
+
+    /**
+     * Created_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getCreated_at() {
+        return $this->_created_at;
+    }
+
+    /**
+     * Updated_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @param int $updated_at
+     * @return \SmsrecordsModel
+     */
+    public function setUpdated_at($updated_at) {
+        $this->_updated_at = (int)$updated_at;
+        $this->_params['updated_at'] = (int)$updated_at;
+        return $this;
+    }
+
+    /**
+     * Updated_at
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getUpdated_at() {
+        return $this->_updated_at;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -366,7 +440,9 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
             'isfail'      => $this->_isfail,
             'mobiles'     => $this->_mobiles,
             'uid'         => $this->_uid,
-            'status'      => $this->_status
+            'status'      => $this->_status,
+            'created_at'  => $this->_created_at,
+            'updated_at'  => $this->_updated_at
         );
     }
 
