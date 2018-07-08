@@ -35,6 +35,7 @@ class SmsModel  extends \Business\AbstractModel
         $driver->setMsg($content);
         $moreMobiles = $this->divideMobiles($mobiles);
         $success = 0;
+        
         foreach ($moreMobiles as $item){
             if(empty($item)){
                 continue;
