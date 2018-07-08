@@ -35,7 +35,6 @@ class SmsModel  extends \Business\AbstractModel
         $driver->setMsg($content);
         $moreMobiles = $this->divideMobiles($mobiles);
         $success = 0;
-        
         foreach ($moreMobiles as $item){
             if(empty($item)){
                 continue;
@@ -162,7 +161,9 @@ class SmsModel  extends \Business\AbstractModel
     }
 
     public function saveReturnData($result){
-
+        $mapper = \Mapper\SmsrecordsModel::getInstance();
+        $model = new \SmsrecordsModel();
+        $model->setReturn_data($result['data']);
     }
 
 }
