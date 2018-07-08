@@ -39,9 +39,11 @@ class SmsModel  extends \Business\AbstractModel
             if(empty($item)){
                 continue;
             }
+            $uid = date('ymdHis').mt_rand(1000, 9999);
+            $driver->setUid($uid);
             $driver->setPhones(implode(',',$item));
             $result = $driver->send();
-            $this->saveReturnData($result);
+            $this->saveReturnData($result,$uid,$content,$type);
             $success += $result['total_fee'];
         }
         return $success;
@@ -164,6 +166,8 @@ class SmsModel  extends \Business\AbstractModel
         $mapper = \Mapper\SmsrecordsModel::getInstance();
         $model = new \SmsrecordsModel();
         $model->setReturn_data($result['data']);
+        $model->setFee($result['total_fee']);
+        $model->
     }
 
 }

@@ -12,6 +12,7 @@ abstract class DriverAbstract {
     protected $_sendTime = '';
     protected $_account = '';
     protected $_password = '';
+    protected $_uid = '';
 
 
 
@@ -30,7 +31,14 @@ abstract class DriverAbstract {
     public function getPhones(){
        return $this->_phones;
     }
-    
+
+    public function setUid($uid){
+        $this->_uid = $uid;
+    }
+
+    public function getUid(){
+        return $this->_uid;
+    }
     public function setMsg($msg){
         $this->_msg = $msg;
     }
