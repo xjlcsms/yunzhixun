@@ -61,4 +61,16 @@ class DataController extends \Base\ApplicationController
         return $this->returnData('获取成功',25003,true,$data);
     }
 
+    public function gettaskAction(){
+        $taskid = $this->getParam('id',0,'int');
+        $mapper = \Mapper\SendtasksModel::getInstance();
+        $task = $mapper->findById($taskid);
+        if(!$task instanceof \SendtasksModel){
+            return $this->returnData('发送任务不存在',25004);
+        }
+        $data = $task->toArray();
+        return $this->returnData('获取成功',25005,true,$data );
+    }
+
+
 }

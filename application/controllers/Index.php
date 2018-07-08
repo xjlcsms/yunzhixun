@@ -42,4 +42,36 @@ class IndexController extends \Base\ApplicationController
     }
 
 
+    public function sendtestAction(){
+        $smser = new \Ku\Sms\Adapter('yunzhixun');
+        $driver = $smser->getDriver();
+        $driver->setType(0);
+        $driver->setAccount('b00bp2');
+        $driver->setPassword('d424eb6c');
+        $driver->setPhones('13606061652');
+        $driver->setMsg('【测试】云之讯的测试');
+        $result = $driver->send();
+        if($result === false){
+            var_dump($driver->getError());
+        }else{
+            var_dump($result);
+        }
+        return false;
+    }
+
+    public function testAction(){
+        $smser = new \Ku\Sms\Adapter('yunzhixun');
+        $driver = $smser->getDriver();
+        $driver->setType(0);
+        $driver->setAccount('b00bp2');
+        $driver->setPassword('d424eb6c');
+        $result = $driver->pushup();
+        if($result === false){
+            var_dump($driver->getError());
+        }else{
+            var_dump($result);
+        }
+        return false;
+    }
+
 }
