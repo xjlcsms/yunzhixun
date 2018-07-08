@@ -46,6 +46,15 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     protected $_content = '';
 
     /**
+     * 短信平台
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @var string
+     */
+    protected $_driver = '';
+
+    /**
      * 返回的数据
      * 
      * Column Type: text
@@ -223,6 +232,31 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
      */
     public function getContent() {
         return $this->_content;
+    }
+
+    /**
+     * 短信平台
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @param string $driver
+     * @return \SmsrecordsModel
+     */
+    public function setDriver($driver) {
+        $this->_driver = (string)$driver;
+        $this->_params['driver'] = (string)$driver;
+        return $this;
+    }
+
+    /**
+     * 短信平台
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @return string
+     */
+    public function getDriver() {
+        return $this->_driver;
     }
 
     /**
@@ -472,6 +506,7 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
             'id'          => $this->_id,
             'user_id'     => $this->_user_id,
             'content'     => $this->_content,
+            'driver'      => $this->_driver,
             'return_data' => $this->_return_data,
             'type'        => $this->_type,
             'fee'         => $this->_fee,
