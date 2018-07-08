@@ -65,6 +65,16 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     protected $_type = 0;
 
     /**
+     * 扣费条数
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_fee = 0;
+
+    /**
      * 是否达到率排除的数据
      * 
      * Column Type: tinyint(3) unsigned
@@ -268,6 +278,33 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 扣费条数
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @param int $fee
+     * @return \SmsrecordsModel
+     */
+    public function setFee($fee) {
+        $this->_fee = (int)$fee;
+        $this->_params['fee'] = (int)$fee;
+        return $this;
+    }
+
+    /**
+     * 扣费条数
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getFee() {
+        return $this->_fee;
+    }
+
+    /**
      * 是否达到率排除的数据
      * 
      * Column Type: tinyint(3) unsigned
@@ -437,6 +474,7 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
             'content'     => $this->_content,
             'return_data' => $this->_return_data,
             'type'        => $this->_type,
+            'fee'         => $this->_fee,
             'isfail'      => $this->_isfail,
             'mobiles'     => $this->_mobiles,
             'uid'         => $this->_uid,
