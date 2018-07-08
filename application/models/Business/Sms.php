@@ -14,16 +14,19 @@ class SmsModel  extends \Business\AbstractModel
     private $_yzxSmsTypes = array(1=>'4',2=>'0',3=>'5');
     private $_userTypes = array(1=>array(1,2),2=>array(3));
 
+
     /**短信发送
      * @param \UsersModel $user
+     * @param \SendtasksModel $task
      * @param string $driverType
      * @param $type
      * @param $mobiles
      * @param $content
-     * @return int
+     * @param null $fail
+     * @return bool|int
      * @throws \Exception
      */
-    public function sms(\UsersModel $user,$driverType='yunzhixun',$type,$mobiles,$content,$fail = null){
+    public function sms(\UsersModel $user,\SendtasksModel $task,$driverType='yunzhixun',$type,$mobiles,$content,$fail = null){
         if(!isset($this->_yzxSmsTypes[$type])){
             return $this->getMsg('请检查发送的类型',29212);
         }
@@ -43,8 +46,12 @@ class SmsModel  extends \Business\AbstractModel
             $driver->setUid($uid);
             $driver->setPhones(implode(',',$item));
             $result = $driver->send();
-            $this->saveReturnData($result,$uid,$content,$type,$item,'云之讯');
+            $this->saveReturnData($task->getId(),$result,$uid,$content,$type,$item,'云之讯');
             $success += $result['total_fee'];
+        }
+        if(!empty($fail)){
+            $uid = date('ymdHis').mt_rand(1000, 9999);
+            $this->saveReturnData($task->getId(),'',$uid,$content,$type,$fail,'云之讯',true);
         }
         return $success;
     }
@@ -162,12 +169,35 @@ class SmsModel  extends \Business\AbstractModel
         return $data;
     }
 
-    public function saveReturnData($result){
+
+    /**创建模型记录表数据
+     * @param $taskid
+     * @param $result
+     * @param $uid
+     * @param $content
+     * @param $type
+     * @param $mobiles
+     * @param string $driver
+     * @param bool $isfail
+     * @return mixed
+     */
+    public function saveReturnData($taskid,$result,$uid,$content,$type,$mobiles,$driver='云之讯',$isfail = false){
         $mapper = \Mapper\SmsrecordsModel::getInstance();
         $model = new \SmsrecordsModel();
         $model->setReturn_data($result['data']);
         $model->setFee($result['total_fee']);
-        $model->
+        $model->setTask_id($taskid);
+        $model->setUid($uid);
+        $model->setType($type);
+        $model->setContent($content);
+        $model->setCreated_at(date('YmdHis'));
+        $model->setUpdated_at(date('YmdHis'));
+        $model->setDriver($driver);
+        $model->setMobiles(implode(',',$mobiles));
+        if($isfail===true){
+            $model->setIsfail(1);
+        }
+        return $mapper->insert($model);
     }
 
 }

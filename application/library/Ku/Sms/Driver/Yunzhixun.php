@@ -44,6 +44,7 @@ class Yunzhixun extends \Ku\Sms\DriverAbstract {
         $http->setTimeout(5);
         try {
             $send = $http->postJson();
+//            return $send;
             $result = json_decode($send,true);
             return $result;
         } catch (\Exception $e) {

@@ -108,7 +108,7 @@ class JobController extends Base\ApplicationController{
             $message = $smsBusiness->getMessage();
             return $this->returnData($message['msg'],$message['code']);
         }
-        $success = $smsBusiness->sms($user,'yunzhixun',$type,$trueMobiles,$content,$arrivalMobiles['fail']);
+        $success = $smsBusiness->sms($user,$task,'yunzhixun',$type,$trueMobiles,$content,$arrivalMobiles['fail']);
         $typeStr = $type ==3?'market':'normal';
         if($success == $truefee){
             $res = $userBusiness->flow($user ,$success,$totalfee,$typeStr);

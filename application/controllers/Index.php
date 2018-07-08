@@ -65,7 +65,7 @@ class IndexController extends \Base\ApplicationController
         $driver->setType(0);
         $driver->setAccount('b00bp2');
         $driver->setPassword('d424eb6c');
-        $result = $driver->pushup();
+        $result = $driver->push();
         if($result === false){
             var_dump($driver->getError());
         }else{
