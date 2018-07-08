@@ -63,6 +63,76 @@ class JobController extends Base\ApplicationController{
     }
 
 
+    /**
+     * 发送短信
+     * @return false
+     * @throws Exception
+     * @throws \PHPExcel\PHPExcel\Reader_Exception
+     */
+    public function smsAction(){
+        $type = $this->getParam('type',0,'int');
+        $smstype = $this->getParam('smstype',0,'int');
+        $taskid = $this->getParam('taskid',0,'int');
+        $content = $this->getParam('content','','string');
+        $task = \Mapper\SendtasksModel::getInstance()->findById($taskid);
+        if(!$task instanceof \SendtasksModel){
+            return $this->returnData('发送任务不存在',29204);
+        }
+        $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('发送任务用户不存在',29205);
+        }
+        $smsBusiness = \Business\SmsModel::getInstance();
+        $userBusiness = \Business\UserModel::getInstance();
+        if($smstype == 1){
+            $smsfile = $this->getParam('smsfile','','string');
+            if(!file_exists(APPLICATION_PATH.'/public/uploads/sms/'.$smsfile || empty($smsfile))){
+                return $this->returnData('发送文件不存在',29200);
+            }
+            $mobiles = $smsBusiness->importMobiles($smsfile);
+        }else{
+            $mobilesStr = $this->getParam('mobiles','','string');
+            $mobiles = explode(',',$mobilesStr);
+        }
+        if(empty($mobiles)){
+            return $this->returnData('没有获取到有效的手机号',29202);
+        }
+        //发送的总数
+        $totalfee = $smsBusiness->totalFee($mobiles,$content);
+        //到达率后的实际数量
+        $arrivalMobiles = $smsBusiness->trueMobiles($user,$mobiles);
+        $trueMobiles = $arrivalMobiles['true'];
+        $truefee = $smsBusiness->totalFee($trueMobiles,$content);
+        $virefy = $smsBusiness->virefy($user,$content,$totalfee);
+        if(!$virefy){
+            $message = $smsBusiness->getMessage();
+            return $this->returnData($message['msg'],$message['code']);
+        }
+        $success = $smsBusiness->sms($user,'yunzhixun',$type,$trueMobiles,$content,$arrivalMobiles['fail']);
+        $typeStr = $type ==3?'market':'normal';
+        if($success == $truefee){
+            $res = $userBusiness->flow($user ,$success,$totalfee,$typeStr);
+            if(!$res){
+                $message = $userBusiness->getMessage();
+                return $this->returnData($message['msg'],$message['code']);
+            }
+            return $this->returnData('发送成功',29201,true);
+        }elseif($success <$truefee and $success >0){
+            $res = $userBusiness->flow($user ,$success,$totalfee,$typeStr);
+            if(!$res){
+                $message = $userBusiness->getMessage();
+                return $this->returnData($message['msg'],$message['code']);
+            }
+            return $this->returnData('发送部分失败',29208,true);
+        }elseif ($success === false){
+            $msg = $smsBusiness->getMessage();
+            return $this->returnData($msg['msg'],$msg['code']);
+        }
+        return $this->returnData('发送失败',29207);
+    }
+
+
+
     /**批量发送文件上传
      * @return false
      * @throws Exception
