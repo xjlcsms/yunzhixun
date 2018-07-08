@@ -37,6 +37,16 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
     protected $_user_id = 0;
 
     /**
+     * 外键发送任务id
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_task_id = 0;
+
+    /**
      * 发送得消息内容
      * 
      * Column Type: varchar(500)
@@ -207,6 +217,33 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
      */
     public function getUser_id() {
         return $this->_user_id;
+    }
+
+    /**
+     * 外键发送任务id
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @param int $task_id
+     * @return \SmsrecordsModel
+     */
+    public function setTask_id($task_id) {
+        $this->_task_id = (int)$task_id;
+        $this->_params['task_id'] = (int)$task_id;
+        return $this;
+    }
+
+    /**
+     * 外键发送任务id
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getTask_id() {
+        return $this->_task_id;
     }
 
     /**
@@ -505,6 +542,7 @@ class SmsrecordsModel extends \Base\Model\AbstractModel {
         return array(
             'id'          => $this->_id,
             'user_id'     => $this->_user_id,
+            'task_id'     => $this->_task_id,
             'content'     => $this->_content,
             'driver'      => $this->_driver,
             'return_data' => $this->_return_data,
