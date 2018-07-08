@@ -43,7 +43,7 @@ class SmsModel  extends \Business\AbstractModel
             $driver->setUid($uid);
             $driver->setPhones(implode(',',$item));
             $result = $driver->send();
-            $this->saveReturnData($result,$uid,$content,$type);
+            $this->saveReturnData($result,$uid,$content,$type,$item,'云之讯');
             $success += $result['total_fee'];
         }
         return $success;
