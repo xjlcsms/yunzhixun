@@ -101,6 +101,15 @@ class RecordModel extends \Base\Model\AbstractModel {
     protected $_sid = '';
 
     /**
+     * 云之讯短信uid
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @var string
+     */
+    protected $_uid = '';
+
+    /**
      * 发送结果报告
      * 
      * Column Type: varchar(191)
@@ -410,6 +419,31 @@ class RecordModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 云之讯短信uid
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @param string $uid
+     * @return \RecordModel
+     */
+    public function setUid($uid) {
+        $this->_uid = (string)$uid;
+        $this->_params['uid'] = (string)$uid;
+        return $this;
+    }
+
+    /**
+     * 云之讯短信uid
+     * 
+     * Column Type: varchar(50)
+     * 
+     * @return string
+     */
+    public function getUid() {
+        return $this->_uid;
+    }
+
+    /**
      * 发送结果报告
      * 
      * Column Type: varchar(191)
@@ -602,6 +636,7 @@ class RecordModel extends \Base\Model\AbstractModel {
             'status'        => $this->_status,
             'code'          => $this->_code,
             'sid'           => $this->_sid,
+            'uid'           => $this->_uid,
             'report_status' => $this->_report_status,
             'desc'          => $this->_desc,
             'droped'        => $this->_droped,
