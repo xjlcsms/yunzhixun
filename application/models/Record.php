@@ -149,29 +149,32 @@ class RecordModel extends \Base\Model\AbstractModel {
     /**
      * 发送成功时间
      * 
-     * Column Type: datetime
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @var string
+     * @var int
      */
-    protected $_arrivaled_at = null;
+    protected $_arrivaled_at = 0;
 
     /**
      * Created_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @var string
+     * @var int
      */
-    protected $_created_at = null;
+    protected $_created_at = 0;
 
     /**
      * Updated_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @var string
+     * @var int
      */
-    protected $_updated_at = null;
+    protected $_updated_at = 0;
 
     /**
      * Params
@@ -548,23 +551,25 @@ class RecordModel extends \Base\Model\AbstractModel {
     /**
      * 发送成功时间
      * 
-     * Column Type: datetime
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @param string $arrivaled_at
+     * @param int $arrivaled_at
      * @return \RecordModel
      */
     public function setArrivaled_at($arrivaled_at) {
-        $this->_arrivaled_at = (string)$arrivaled_at;
-        $this->_params['arrivaled_at'] = (string)$arrivaled_at;
+        $this->_arrivaled_at = (int)$arrivaled_at;
+        $this->_params['arrivaled_at'] = (int)$arrivaled_at;
         return $this;
     }
 
     /**
      * 发送成功时间
      * 
-     * Column Type: datetime
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @return string
+     * @return int
      */
     public function getArrivaled_at() {
         return $this->_arrivaled_at;
@@ -573,23 +578,25 @@ class RecordModel extends \Base\Model\AbstractModel {
     /**
      * Created_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @param string $created_at
+     * @param int $created_at
      * @return \RecordModel
      */
     public function setCreated_at($created_at) {
-        $this->_created_at = (string)$created_at;
-        $this->_params['created_at'] = (string)$created_at;
+        $this->_created_at = (int)$created_at;
+        $this->_params['created_at'] = (int)$created_at;
         return $this;
     }
 
     /**
      * Created_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @return string
+     * @return int
      */
     public function getCreated_at() {
         return $this->_created_at;
@@ -598,23 +605,25 @@ class RecordModel extends \Base\Model\AbstractModel {
     /**
      * Updated_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @param string $updated_at
+     * @param int $updated_at
      * @return \RecordModel
      */
     public function setUpdated_at($updated_at) {
-        $this->_updated_at = (string)$updated_at;
-        $this->_params['updated_at'] = (string)$updated_at;
+        $this->_updated_at = (int)$updated_at;
+        $this->_params['updated_at'] = (int)$updated_at;
         return $this;
     }
 
     /**
      * Updated_at
      * 
-     * Column Type: timestamp
+     * Column Type: bigint(20)
+     * Default: 0
      * 
-     * @return string
+     * @return int
      */
     public function getUpdated_at() {
         return $this->_updated_at;
