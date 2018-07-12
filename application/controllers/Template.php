@@ -81,4 +81,19 @@ class TemplateController extends \Base\ApplicationController
         return $this->returnData('审核成功',27001,true);
     }
 
+    /**获取模板内容
+     * @return false
+     */
+    public function gainAction(){
+        $mapper =\Mapper\TemplatesModel::getInstance();
+        $tempId = $this->getParam('tempId',0,'int');
+        $temp = $mapper->fetch(array('Id'=>$tempId,'status'=>1));
+        if(!$temp instanceof \TemplatesModel){
+            return $this->returnData('模板不存在或未审核',27006);
+        }
+        $data = $temp->toArray();
+        return $this->returnData('获取成功',27005,true,$data);
+    }
+
+
 }

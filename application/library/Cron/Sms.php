@@ -4,115 +4,77 @@ namespace Cron;
 
 class Sms extends \Cron\CronAbstract {
 
-    protected $phones = null;
-    protected $sendMsg = null;
-    protected $_driver = 'xuanwu';
-
-    protected function setDriver($driver) {
-        $this->_driver = $driver;
-    }
+    private $_smsId = 'yunzhixun.sms.id.%s';
 
     public function main() {
-	$redis = $this->getRedis();
-        $key = 'sms_fail';
-        $beginTime = time();
-        $queue = \Business\QueueModel::getInstance();
-        $queue->setType('sms');
-        while (time() - $beginTime < 60) {
-            $queueModel = $queue->pop();
-            if ($queueModel === null) {
+        $mapper = \Mapper\SmsqueueModel::getInstance();
+        $business = \Business\SmsModel::getInstance();
+        $userBusiness = \Business\UserModel::getInstance();
+        $begin = time();
+        while (time() - $begin <60){
+            $model = $mapper->pull();
+            if(!$model instanceof \SmsqueueModel){
                 sleep(1);
                 continue;
             }
-            $this->parseContent($queueModel);
-            $smser = new \Ku\Sms\Adapter($this->_driver);
-            $driver = $smser->getDriver();
-            $driver->setMsg($this->getSendMsg());
-            $driver->setPhones($this->phones);
-            $result = $driver->send();
-            $queueModel->setStatus($result ? 'successed' : 'failed');
-            $this->sendMsg($queueModel);
-	    if($result ===  false){
-		$redis->incr($key);
-	    	$this->log($driver->getError());
-                if($redis->get($key)==3 ||$redis->get($key)==30){
-       		    $queue->setType('email')
-                     ->setContent('address', '89932965@qq.com')
-                ->setContent('channel', 'smsfail')
-                ->setContent('username', 'liantu.com内部系统监控警告')
-                ->setContent('msg', 'liantu.com短信发送失败了');
-                $queue->push();
-  		$queue->setType('sms');
-                } 
-	    }else{
-           	$redis->del($key);
-	   }
-        }
-    }
-
-    /**
-     * 注册激活
-     */
-    public function regChannel($code) {
-        $this->sendMsg = $code . '（注册短信验证码）。如非本人操作，请无视';
-    }
-
-    /**
-     * 找回密码
-     */
-    public function resetpasswordChannel($code) {
-        $this->sendMsg = $code . '（密码找回验证码）。如非本人操作，请无视。';
-    }
-
-    /**
-     * 　发送消息
-     *
-     * @return string
-     */
-    protected function getSendMsg() {
-        return $this->sendMsg;
-    }
-
-    /**
-     * 解析队列内容　
-     *
-     * @param \QueueModel $queue
-     */
-    protected function parseContent(\QueueModel $queue) {
-        $queueContent = $queue->getContent();
-
-        if (!$queueContent) {
-            return false;
-        }
-
-        $json = \json_decode($queueContent, true);
-
-        if (!isset($json['channel'])) {
-            return false;
-        }
-
-        $funcName = strtolower($json['channel']) . 'Channel';
-
-        if (method_exists($this, $funcName)) {
-            $this->phones = isset($json['phone']) ? $json['phone'] : null;
-            if (isset($json['params'])) {
-                $val = $json['params'];
-            } else {
-                $val = isset($json['code']) ? $json['code'] : null;
+            //加锁防止冲突
+            $res = $this->locked(sprintf($this->_smsId,$model->getId()),__CLASS__,__FUNCTION__);
+            if($res){
+                continue;
             }
-
-            $this->{$funcName}($val);
+            $this->log('Id:'.$model->getId().':start');
+            $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
+            if(!$task instanceof \SendtasksModel){
+                $this->log('Id:'.$model->getId().':fail,任务不存在');
+                $model->setStatus(4);
+                $mapper->update($model);
+                continue;
+            }
+            $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
+            if(!$user instanceof \UsersModel){
+                $this->log('Id:'.$model->getId().':fail,用户不存在');
+                $model->setStatus(4);
+                $mapper->update($model);
+                continue;
+            }
+            $result = $business->sms($user,$model);
+            if($result === false or !isset($result['total_fee']) ){
+                $this->log('Id:'.$model->getId().':fail,短信发送失败');
+                $model->setStatus(4);
+                $mapper->update($model);
+                continue;
+            }
+            if($result['total_fee'] == 0){
+                $this->log('Id:'.$model->getId().':fail,短信发送失败');
+                $model->setStatus(4);
+                $mapper->update($model);
+                continue;
+            }
+            $account = $model->getType()==3?'market':'normal';
+            $res = $userBusiness->flow($user,$result['total_fee'],0,$account);
+            if(!$res){
+                $config = \Yaf\Registry::get('config');
+                $key = $config->get('flow.error');
+                $redis = $this->getRedis();
+                $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_true','fee'=>$result['total_fee'])));
+                $this->log('Id:'.$model->getId().':fail,扣除用户余额失败');
+            }
+            $onefee = $business->oneFee($task->getContent());
+            $sendNum = $result['total_fee']/$onefee;
+            if($model->getSend_num() > $sendNum){
+                $model->setStatus(3);
+            }else{
+                $model->setStatus(2);
+            }
+            $model->setSuccess($sendNum);
+            $model->setCallback(json_encode($result));
+            $mapper->update($model);
         }
+        return false;
     }
 
-    protected function sendMsg(\QueueModel $queue) {
-        $mapper = \Mapper\QueueModel::getInstance();
-        try {
-            $mapper->update($queue);
-            return true;
-        } catch (Exception $ex) {
-            return false;
-        }
-    }
+    
+
+
 
 }

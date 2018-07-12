@@ -59,6 +59,13 @@ class JobController extends Base\ApplicationController{
             throw new ErrorException('发送任务不存在');
         }
         $this->assign('task',$task->toArray());
+        if($task->getIs_template() == 1){
+            $temp = \Mapper\TemplatesModel::getInstance()->fetch(array('Id'=>$task->getTemplate_id(),'status'=>1));
+            if(!$temp instanceof \TemplatesModel){
+                throw new ErrorException('模板不存在');
+            }
+            $this->assign('temp',$temp->toArray());
+        }
         $this->assign('sendTypes',$this->_sendTypes);
     }
 
@@ -83,7 +90,6 @@ class JobController extends Base\ApplicationController{
             return $this->returnData('发送任务用户不存在',29205);
         }
         $smsBusiness = \Business\SmsModel::getInstance();
-        $userBusiness = \Business\UserModel::getInstance();
         if($smstype == 1){
             $smsfile = $this->getParam('smsfile','','string');
             if(!file_exists(APPLICATION_PATH.'/public/uploads/sms/'.$smsfile || empty($smsfile))){
@@ -99,36 +105,36 @@ class JobController extends Base\ApplicationController{
         }
         //发送的总数
         $totalfee = $smsBusiness->totalFee($mobiles,$content);
-        //到达率后的实际数量
-        $arrivalMobiles = $smsBusiness->trueMobiles($user,$mobiles);
-        $trueMobiles = $arrivalMobiles['true'];
-        $truefee = $smsBusiness->totalFee($trueMobiles,$content);
         $virefy = $smsBusiness->virefy($user,$content,$totalfee);
         if(!$virefy){
             $message = $smsBusiness->getMessage();
             return $this->returnData($message['msg'],$message['code']);
         }
-        $success = $smsBusiness->sms($user,$task,'yunzhixun',$type,$trueMobiles,$content,$arrivalMobiles['fail']);
-        $typeStr = $type ==3?'market':'normal';
-        if($success == $truefee){
-            $res = $userBusiness->flow($user ,$success,$totalfee,$typeStr);
-            if(!$res){
-                $message = $userBusiness->getMessage();
-                return $this->returnData($message['msg'],$message['code']);
-            }
-            return $this->returnData('发送成功',29201,true);
-        }elseif($success <$truefee and $success >0){
-            $res = $userBusiness->flow($user ,$success,$totalfee,$typeStr);
-            if(!$res){
-                $message = $userBusiness->getMessage();
-                return $this->returnData($message['msg'],$message['code']);
-            }
-            return $this->returnData('发送部分失败',29208,true);
-        }elseif ($success === false){
-            $msg = $smsBusiness->getMessage();
-            return $this->returnData($msg['msg'],$msg['code']);
+        $userBusiness = \Business\UserModel::getInstance();
+        $account = $type == 3?'market':'normal';
+        $res = $userBusiness->flow($user,0,$totalfee,$account);
+        if(!$res){
+            $config = \Yaf\Registry::get('config');
+            $key = $config->get('flow.error');
+            $redis = $this->getRedis();
+            $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_show','fee'=>$totalfee)));
         }
-        return $this->returnData('发送失败',29207);
+        $mobiles = $smsBusiness->divideMobiles($mobiles);
+        $smsMapper = \Mapper\SmsqueueModel::getInstance();
+        $model = new \SmsqueueModel();
+        $model->setTask_id($taskid);
+        $model->setContent($content);
+        $model->setType($type);
+        foreach ($mobiles as $mobile){
+           $data = $smsBusiness->trueMobiles($user,$mobile);
+           $model->setCreated_at(date('Ymdhis'));
+           $model->setNot_arrive(implode(',',$data['fail']));
+           $model->setMobiles(implode(',',$data['true']));
+           $model->setSend_num(count($data['true']));
+           $model->setTotal_num(count($mobile));
+           $smsMapper->insert($model);
+        }
+        return $this->returnData('发送成功',29201);
     }
 
 
@@ -221,6 +227,25 @@ class JobController extends Base\ApplicationController{
         exit();
     }
 
+
+    /**任务驳回
+     * @return false
+     */
+    public function rejectAction(){
+        $taskid = $this->getParam('taskid',0,'int');
+        $mapper = \Mapper\SendtasksModel::getInstance();
+        $task = $mapper->findById($taskid);
+        if(!$task instanceof \SendtasksModel){
+            return $this->returnData('处理的任务不存在',29400);
+        }
+        $task->setStatus(4);
+        $task->setUpdated_at(date('Y-m-d H:i:s'));
+        $res = $mapper->update($task);
+        if(!$res){
+            return $this->returnData('驳回任务失败，请重试',29402);
+        }
+        return $this->returnData('处理成功',29401,true);
+    }
 
 
 }

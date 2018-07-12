@@ -322,4 +322,13 @@ class Tool {
         return false;
     }
 
+    /**手机模糊化
+     * @param $phone
+     * @return string
+     */
+    public static function fuzzy($phone){
+        $str = mb_substr($phone,0,3).'****'.mb_substr($phone,7,4);
+        return $str;
+    }
+
 }

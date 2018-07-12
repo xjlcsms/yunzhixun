@@ -7,14 +7,15 @@ abstract class CronAbstract {
     protected $argv = null;
     protected $conf = null;
     protected $redis = null;
-    protected $adapter = 'default';
+    protected $redis_old = null;
 
     final public function __construct(array $argv, \Yaf\Application $app) {
         $conf = $app->getConfig();
         $this->argv = $argv;
         $this->conf = $conf;
-        $this->addAdapter($this->adapter);
+        $this->initAdapter();
         $this->getRedis();
+        $this->getOldRedis();
         \Yaf\Registry::set('config', $conf);
     }
 
@@ -46,7 +47,11 @@ abstract class CronAbstract {
         if ($this->redis instanceof \Redis) {
             return $this->redis;
         }
-
+        $redis = \Yaf\Registry::get('redis');
+        if($redis instanceof \Redis){
+            $this->redis = $redis;
+            return $redis;
+        }
         if (!extension_loaded('redis')) {
             throw new \Exception('Redis is need redis Extension!');
         }
@@ -56,7 +61,40 @@ abstract class CronAbstract {
         if (!$conf) {
             throw new \Exception('Not redis configure!', 503);
         }
+        $this->redis = $this->loadRedis($conf);
+        \Yaf\Registry::set('redis', $this->redis);
+        return $this->redis;
+    }
 
+
+    protected function getOldRedis(){
+
+        if ($this->redis_old instanceof \Redis) {
+            return $this->redis_old;
+        }
+        $redis = \Yaf\Registry::get('redis_old');
+        if($redis instanceof \Redis){
+            $this->redis_old = $redis;
+            return $redis;
+        }
+        if (!extension_loaded('redis')) {
+            throw new \Exception('Redis is need redis Extension!');
+        }
+
+        $conf = $this->getConfig()->get('resources.redis_old');
+
+        if (!$conf) {
+            throw new \Exception('Not redis configure!', 503);
+        }
+        $this->redis_old = $this->loadRedis($conf);
+        \Yaf\Registry::set('redis_old', $this->redis_old);
+        return $this->redis_old;
+    }
+
+
+
+
+    protected function loadRedis($conf){
         $redis = new \Redis();
 
         /*
@@ -81,7 +119,7 @@ abstract class CronAbstract {
         }
 
         // 是否要切换Db
-        if ($conf->get('db')) {
+        if ($conf->get('db') !== null) {
             $redis->select($conf->get('db'));
         }
 
@@ -89,10 +127,9 @@ abstract class CronAbstract {
         if ($conf->get('options.prefix')) {
             $redis->setOption(\Redis::OPT_PREFIX, $conf->get('options.prefix'));
         }
-        $this->redis = $redis;
-        \Yaf\Registry::set('redis', $redis);
         return $redis;
     }
+
 
     /**
      * 增加适配器
@@ -100,19 +137,24 @@ abstract class CronAbstract {
      * @param string $name
      * @throws \Exception
      */
-    public function addAdapter() {
+    public function initAdapter() {
         $conf = new \Yaf\Config\Ini(APPLICATION_PATH . '/conf/database.ini', \Yaf\Application::app()->environ());
         $connects = $conf->get('resources.database');
         if (!$connects) {
             throw new \Exception('Not database configure', 503);
         }
+
         if (isset($connects['multi'])) {
-            $connect = $connects['multi']['default'];
+            foreach (array_keys($connects['multi']->toArray()) as $adapter){
+                $dbAdapter = new \Zend\Db\Adapter\Adapter($connects['multi'][$adapter]->toArray());
+                \Yaf\Registry::set($adapter.'Adapter', $dbAdapter);
+            }
         } else {
             $connect = $connects;
+            $dbAdapter = new \Zend\Db\Adapter\Adapter($connect->toArray());
+            \Yaf\Registry::set('defaultAdapter', $dbAdapter);
         }
-        $dbAdapter = new \Zend\Db\Adapter\Adapter($connect->toArray());
-        \Yaf\Registry::set('defaultAdapter', $dbAdapter);
+
     }
 
     // 静态页面的配置
@@ -124,10 +166,90 @@ abstract class CronAbstract {
         }
         return $apiIni->get($conName);
     }
+
+    /**
+     * 发送短信功能
+     * @param $phone 手机号
+     * @param $msg 内容
+     */
+    public function sendSms($phone,$msg){
+        $sms = new \Ku\Sms\Adapter('passion');
+        $driver = $sms->getDriver();
+        $driver->setPhones($phone);
+        $driver->setMsg($msg);
+        $driver->send();
+    }
+
     
     public function log($msg){
           echo date('Y-m-d H:i:s').'-'.$msg."\r\n";
-    }    
+    }
+    
+    public function start($msg){
+         echo date('Y-m-d H:i:s').'-'.$msg.":start\r\n";
+        
+    }
+    public function success($msg){
+        echo date('Y-m-d H:i:s').'-'.$msg.":success\r\n";
+    }
+    public function fail($msg){
+        echo date('Y-m-d H:i:s').'-'.$msg.":fail\r\n";
+    }
 
-    abstract public function main();
+    public function end($msg){
+         echo date('Y-m-d H:i:s').'-'.$msg.":end\r\n";
+        
+    }
+
+    /**
+      *锁定任务
+      */
+    public function locked($key, $class = __CLASS__,$function = __FUNCTION__, $expire = 1200){
+        
+        $redis = $this->getRedis();
+        $class = str_replace('\\', '.', $class);
+        $lockKey = sprintf(\Ku\Consts::SYSTEM_LOCK_TASK,$class,$function,$key);
+        $value = $redis->get($lockKey);
+        if($value){
+            return false;
+        }else{
+           $redis->incr($lockKey);
+           $redis->expire($lockKey,$expire);
+           return true;
+        }
+        
+    }
+    /**
+     *解锁任务
+     */
+    public function unlock($key, $class = __CLASS__,$function = __FUNCTION__){
+        $redis = $this->getRedis();
+        $class = str_replace('\\', '.', $class);
+        $lockKey = sprintf(\Ku\Consts::SYSTEM_LOCK_TASK, $class, $function, $key);
+        $value = $redis->get($lockKey);
+        if($value){
+            $redis->delete($lockKey);
+            return true;
+        }
+        return true;
+    }
+    
+    public function sendSwoole($class,$method,$params){
+        $config = $this->getConfig();
+        $conf = $config->get('resource.swoole.client');
+        $client = new swoole_client(SWOOLE_SOCK_TCP);
+            if (!$client->connect($conf['host'], $conf['port'], -1))
+            {
+                exit("connect failed. Error: {$client->errCode}\n");
+            }
+            $data['class'] = $class;
+            $data['method'] = $method;
+            $data['params'] = $params;
+            $client->send(\json_encode($data));
+            $back = $client->recv();
+            $client->close();
+            return $back; 
+    }
+
+        abstract public function main();
 }

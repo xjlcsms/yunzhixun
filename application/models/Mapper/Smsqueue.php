@@ -7,15 +7,14 @@
  */
 namespace Mapper;
 
-class SmsrecordsModel extends \Mapper\AbstractModel
+class SmsqueueModel extends \Mapper\AbstractModel
 {
 
     use \Base\Model\InstanceModel;
 
-    protected $modelClass = '\SmsrecordsModel';
+    protected $modelClass = '\SmsqueueModel';
 
-    protected $table = 'sms_records';
-
+    protected $table = 'sms_queue';
 
     /**
      * 导出队列数据模型
@@ -24,13 +23,14 @@ class SmsrecordsModel extends \Mapper\AbstractModel
     public function pull(){
         $where = array('status'=>0);
         $model = $this->fetch($where);
-        if(!$model instanceof \SmsrecordsModel){
+        if(!$model instanceof \SmsqueueModel){
             return null;
         }
         $model->setStatus(1);
         $this->update($model);
         return $model;
     }
+
 
 
 }

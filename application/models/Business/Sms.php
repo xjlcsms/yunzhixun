@@ -14,46 +14,30 @@ class SmsModel  extends \Business\AbstractModel
     private $_yzxSmsTypes = array(1=>'4',2=>'0',3=>'5');
     private $_userTypes = array(1=>array(1,2),2=>array(3));
 
-
     /**短信发送
      * @param \UsersModel $user
-     * @param \SendtasksModel $task
-     * @param string $driverType
-     * @param $type
-     * @param $mobiles
-     * @param $content
-     * @param null $fail
+     * @param \SmsqueueModel $sms
      * @return bool|int
      * @throws \Exception
      */
-    public function sms(\UsersModel $user,\SendtasksModel $task,$driverType='yunzhixun',$type,$mobiles,$content,$fail = null){
-        if(!isset($this->_yzxSmsTypes[$type])){
+    public function sms(\UsersModel $user,\SmsqueueModel $sms){
+        if(!isset($this->_yzxSmsTypes[$sms->getType()])){
             return $this->getMsg('请检查发送的类型',29212);
         }
-        $smser = new \Ku\Sms\Adapter($driverType);
+        $smser = new \Ku\Sms\Adapter('yunzhixun');
         $driver = $smser->getDriver();
-        $driver->setType($this->_yzxSmsTypes[$type]);
+        $driver->setType($this->_yzxSmsTypes[$sms->getType()]);
         $driver->setAccount($user->getAccount());
         $driver->setPassword($user->getRaw_password());
-        $driver->setMsg($content);
-        $moreMobiles = $this->divideMobiles($mobiles);
-        $success = 0;
-        foreach ($moreMobiles as $item){
-            if(empty($item)){
-                continue;
-            }
-            $uid = date('ymdHis').mt_rand(1000, 9999);
-            $driver->setUid($uid);
-            $driver->setPhones(implode(',',$item));
-            $result = $driver->send();
-            $this->saveReturnData($task->getId(),$result,$uid,$content,$type,$item,'云之讯');
-            $success += $result['total_fee'];
+        $driver->setMsg($sms->getContent());
+        $uid = date('ymdHis').mt_rand(1000, 9999);
+        $driver->setUid($uid);
+        $driver->setPhones($sms->getMobiles());
+        $result = $driver->send();
+        if($result !==false){
+            \Mapper\SmsqueueModel::getInstance()->update(array('uid'=>$uid),array('id'=>$sms->getId()));
         }
-        if(!empty($fail)){
-            $uid = date('ymdHis').mt_rand(1000, 9999);
-            $this->saveReturnData($task->getId(),'',$uid,$content,$type,$fail,'云之讯',true);
-        }
-        return $success;
+        return $result;
     }
 
 
@@ -148,6 +132,20 @@ class SmsModel  extends \Business\AbstractModel
             $totalfee = $count;
         }
         return (int)$totalfee;
+    }
+
+    /**短信收费
+     * @param $content
+     * @return int
+     */
+    public function oneFee($content){
+        $strlen = mb_strlen($content);
+        if($strlen>70){
+            $fee = ceil($strlen/67);
+        }else{
+            $fee = 1;
+        }
+        return (int)$fee;
     }
 
     /**根据到达率产生随机发送的手机号
