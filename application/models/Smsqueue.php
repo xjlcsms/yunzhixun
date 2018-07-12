@@ -74,14 +74,13 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_callback = null;
 
     /**
-     * 是否到达丢列
+     * 到达率排除手机号
      * 
-     * Column Type: tinyint(3)
-     * Default: 1
+     * Column Type: text
      * 
-     * @var int
+     * @var string
      */
-    protected $_is_arrive = 1;
+    protected $_not_arrive = null;
 
     /**
      * 状态
@@ -274,30 +273,28 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * 是否到达丢列
+     * 到达率排除手机号
      * 
-     * Column Type: tinyint(3)
-     * Default: 1
+     * Column Type: text
      * 
-     * @param int $is_arrive
+     * @param string $not_arrive
      * @return \SmsqueueModel
      */
-    public function setIs_arrive($is_arrive) {
-        $this->_is_arrive = (int)$is_arrive;
-        $this->_params['is_arrive'] = (int)$is_arrive;
+    public function setNot_arrive($not_arrive) {
+        $this->_not_arrive = (string)$not_arrive;
+        $this->_params['not_arrive'] = (string)$not_arrive;
         return $this;
     }
 
     /**
-     * 是否到达丢列
+     * 到达率排除手机号
      * 
-     * Column Type: tinyint(3)
-     * Default: 1
+     * Column Type: text
      * 
-     * @return int
+     * @return string
      */
-    public function getIs_arrive() {
-        return $this->_is_arrive;
+    public function getNot_arrive() {
+        return $this->_not_arrive;
     }
 
     /**
@@ -367,7 +364,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'type'       => $this->_type,
             'mobiles'    => $this->_mobiles,
             'callback'   => $this->_callback,
-            'is_arrive'  => $this->_is_arrive,
+            'not_arrive' => $this->_not_arrive,
             'status'     => $this->_status,
             'created_at' => $this->_created_at
         );
