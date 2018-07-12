@@ -103,6 +103,16 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_created_at = 0;
 
     /**
+     * 发送手机号数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_total_num = 0;
+
+    /**
      * 实际发送给云之讯数量
      * 
      * Column Type: int(11) unsigned
@@ -372,6 +382,33 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 发送手机号数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @param int $total_num
+     * @return \SmsqueueModel
+     */
+    public function setTotal_num($total_num) {
+        $this->_total_num = (int)$total_num;
+        $this->_params['total_num'] = (int)$total_num;
+        return $this;
+    }
+
+    /**
+     * 发送手机号数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getTotal_num() {
+        return $this->_total_num;
+    }
+
+    /**
      * 实际发送给云之讯数量
      * 
      * Column Type: int(11) unsigned
@@ -441,6 +478,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'not_arrive' => $this->_not_arrive,
             'status'     => $this->_status,
             'created_at' => $this->_created_at,
+            'total_num'  => $this->_total_num,
             'send_num'   => $this->_send_num,
             'success'    => $this->_success
         );
