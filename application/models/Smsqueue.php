@@ -133,6 +133,15 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_success = 0;
 
     /**
+     * 云之讯uid
+     * 
+     * Column Type: varchar(60)
+     * 
+     * @var string
+     */
+    protected $_uid = '';
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -463,6 +472,31 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 云之讯uid
+     * 
+     * Column Type: varchar(60)
+     * 
+     * @param string $uid
+     * @return \SmsqueueModel
+     */
+    public function setUid($uid) {
+        $this->_uid = (string)$uid;
+        $this->_params['uid'] = (string)$uid;
+        return $this;
+    }
+
+    /**
+     * 云之讯uid
+     * 
+     * Column Type: varchar(60)
+     * 
+     * @return string
+     */
+    public function getUid() {
+        return $this->_uid;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -480,7 +514,8 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'created_at' => $this->_created_at,
             'total_num'  => $this->_total_num,
             'send_num'   => $this->_send_num,
-            'success'    => $this->_success
+            'success'    => $this->_success,
+            'uid'        => $this->_uid
         );
     }
 
