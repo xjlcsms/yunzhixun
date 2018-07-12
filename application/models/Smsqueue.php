@@ -103,6 +103,26 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_created_at = 0;
 
     /**
+     * 实际发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_send_num = 0;
+
+    /**
+     * 成功发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_success = 0;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -352,6 +372,60 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 实际发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @param int $send_num
+     * @return \SmsqueueModel
+     */
+    public function setSend_num($send_num) {
+        $this->_send_num = (int)$send_num;
+        $this->_params['send_num'] = (int)$send_num;
+        return $this;
+    }
+
+    /**
+     * 实际发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getSend_num() {
+        return $this->_send_num;
+    }
+
+    /**
+     * 成功发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @param int $success
+     * @return \SmsqueueModel
+     */
+    public function setSuccess($success) {
+        $this->_success = (int)$success;
+        $this->_params['success'] = (int)$success;
+        return $this;
+    }
+
+    /**
+     * 成功发送给云之讯数量
+     * 
+     * Column Type: int(11) unsigned
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getSuccess() {
+        return $this->_success;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -366,7 +440,9 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'callback'   => $this->_callback,
             'not_arrive' => $this->_not_arrive,
             'status'     => $this->_status,
-            'created_at' => $this->_created_at
+            'created_at' => $this->_created_at,
+            'send_num'   => $this->_send_num,
+            'success'    => $this->_success
         );
     }
 
