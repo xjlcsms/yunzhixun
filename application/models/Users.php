@@ -169,6 +169,16 @@ class UsersModel extends \Base\Model\AbstractModel {
     protected $_platform_type = 1;
 
     /**
+     * 是否删除
+     * 
+     * Column Type: tinyint(1)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_isdel = 0;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -599,6 +609,33 @@ class UsersModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 是否删除
+     * 
+     * Column Type: tinyint(1)
+     * Default: 0
+     * 
+     * @param int $isdel
+     * @return \UsersModel
+     */
+    public function setIsdel($isdel) {
+        $this->_isdel = (int)$isdel;
+        $this->_params['isdel'] = (int)$isdel;
+        return $this;
+    }
+
+    /**
+     * 是否删除
+     * 
+     * Column Type: tinyint(1)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getIsdel() {
+        return $this->_isdel;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -620,7 +657,8 @@ class UsersModel extends \Base\Model\AbstractModel {
             'remember_token'         => $this->_remember_token,
             'created_at'             => $this->_created_at,
             'updated_at'             => $this->_updated_at,
-            'platform_type'          => $this->_platform_type
+            'platform_type'          => $this->_platform_type,
+            'isdel'                  => $this->_isdel
         );
     }
 
