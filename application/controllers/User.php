@@ -211,7 +211,7 @@ class UserController extends \Base\ApplicationController
         $surePwd = $this->getParam('surePwd','','string');
         $userid = $this->getParam('userid',0,'int');
         $mapper = \Mapper\UsersModel::getInstance();
-        $user = $mapper->findById($userid);
+        $user = $mapper->fetch(array('id'=>$userid,'isdel'=>0));
         if(!$user instanceof \UsersModel){
             return $this->returnData('用户不存在',21020);
         }

@@ -137,4 +137,24 @@ class Sms extends \Cron\CronAbstract {
         return false;
     }
 
+    public function exportSms(){
+        $mapper = \Mapper\SmsqueueModel::getInstance();
+        $begin = time();
+        while (time() - $begin <60) {
+            $model = $mapper->pullover();
+            if (!$model instanceof \SmsqueueModel) {
+                sleep(1);
+                continue;
+            }
+            $this->log('Id:'.$model->getId().':start');
+            $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
+            $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
+            if(!$user instanceof \UsersModel){
+                $this->fail($model->getId().':发送用户不存在');
+                continue;
+            }
+
+        }
+    }
+
 }
