@@ -4,9 +4,9 @@
  * 发送队列表
  * 
  * @Table Schema: sms_test
- * @Table Name: sms_queue
+ * @Table Name: sms_queue_copy
  */
-class SmsqueueModel extends \Base\Model\AbstractModel {
+class SmsqueuecopyModel extends \Base\Model\AbstractModel {
 
     /**
      * Params
@@ -190,7 +190,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * PRI
      * 
      * @param int $id
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setId($id) {
         $this->_id = (int)$id;
@@ -218,7 +218,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $task_id
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setTask_id($task_id) {
         $this->_task_id = (int)$task_id;
@@ -244,7 +244,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: varchar(500)
      * 
      * @param string $content
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setContent($content) {
         $this->_content = (string)$content;
@@ -270,7 +270,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $type
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setType($type) {
         $this->_type = (int)$type;
@@ -296,7 +296,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: text
      * 
      * @param string $mobiles
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setMobiles($mobiles) {
         $this->_mobiles = (string)$mobiles;
@@ -321,7 +321,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: text
      * 
      * @param string $callback
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setCallback($callback) {
         $this->_callback = (string)$callback;
@@ -346,7 +346,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: text
      * 
      * @param string $not_arrive
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setNot_arrive($not_arrive) {
         $this->_not_arrive = (string)$not_arrive;
@@ -372,7 +372,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $status
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setStatus($status) {
         $this->_status = (int)$status;
@@ -399,7 +399,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $created_at
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setCreated_at($created_at) {
         $this->_created_at = (int)$created_at;
@@ -426,7 +426,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $total_num
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setTotal_num($total_num) {
         $this->_total_num = (int)$total_num;
@@ -453,7 +453,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $send_num
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setSend_num($send_num) {
         $this->_send_num = (int)$send_num;
@@ -480,7 +480,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $success
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setSuccess($success) {
         $this->_success = (int)$success;
@@ -506,7 +506,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: varchar(60)
      * 
      * @param string $uid
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setUid($uid) {
         $this->_uid = (string)$uid;
@@ -532,7 +532,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $pull_num
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setPull_num($pull_num) {
         $this->_pull_num = (int)$pull_num;
@@ -558,7 +558,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Column Type: text
      * 
      * @param string $pull
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setPull($pull) {
         $this->_pull = (string)$pull;
@@ -584,7 +584,7 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * Default: 0
      * 
      * @param int $updated_at
-     * @return \SmsqueueModel
+     * @return \SmsqueuecopyModel
      */
     public function setUpdated_at($updated_at) {
         $this->_updated_at = (int)$updated_at;
