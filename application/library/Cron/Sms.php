@@ -5,8 +5,7 @@ namespace Cron;
 class Sms extends \Cron\CronAbstract {
 
     private $_smsId = 'yunzhixun.sms.id.%s';
-    private $_pullId = 'yunzhixun.pull.%s.id.%s';
-
+    private $_fileFirst = APPLICATION_PATH.'/data/sms/';
 
     public function main() {
         $func = $this->getArgv(2);
@@ -138,11 +137,19 @@ class Sms extends \Cron\CronAbstract {
     }
 
     public function exportSms(){
+        $key = 'import_sms_pull_over_%s';
         $mapper = \Mapper\SmsqueueModel::getInstance();
+        $copyMapper = \Mapper\SmsqueuecopyModel::getInstance();
         $begin = time();
         while (time() - $begin <60) {
             $model = $mapper->pullover();
             if (!$model instanceof \SmsqueueModel) {
+                sleep(1);
+                continue;
+            }
+            //加锁防止冲突
+            $res = $this->locked(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+            if($res){
                 sleep(1);
                 continue;
             }
@@ -153,7 +160,7 @@ class Sms extends \Cron\CronAbstract {
                 $this->fail($model->getId().':发送用户不存在');
                 continue;
             }
-
+            $fileName = 'task_'.$task->getId();
         }
     }
 

@@ -43,7 +43,7 @@ class UserController extends \Base\ApplicationController
      *操作记录
      */
     public function recordsAction(){
-        $where = [];
+        $where = ['isdel'=>0];
         $userid = $this->getParam('userid','','int');
         $acount = $this->getParam('acount',0,'int');
         $direction = $this->getParam('direction',0,'int');
@@ -81,7 +81,7 @@ class UserController extends \Base\ApplicationController
 
 
     /**
-     * 创瑞云开户
+     * 云之讯开户
      * @return false
      */
     public function insertAction(){
@@ -103,8 +103,8 @@ class UserController extends \Base\ApplicationController
         $mapper = \Mapper\UsersModel::getInstance();
         $model = new \UsersModel();
         $model->setUsername($username);
-        $model->setAccess_key($access_key);
-        $model->setSecret($secret);
+        $model->setAccount($account);
+        $model->setRaw_password($rawPassword);
         $model->setPassword(\Ku\Tool::encryption($passward));
         $model->setCreated_at(date('Y-m-d H:i:s'));
         $model->setUpdated_at(date('Y-m-d H:i:s'));
@@ -220,7 +220,7 @@ class UserController extends \Base\ApplicationController
         if (\Ku\Tool::valid($surePwd, $admin->getPassword(), null) === false) {
             return $this->returnData('原密码错误，请重新输入',21022);
         }
-        $res = $mapper->del(array('id'=>$userid));
+        $res = $mapper->update(array('isdel'=>1),array('id'=>$userid));
         if(!$res){
             return $this->returnData('删除失败，请重试',21023);
         }
