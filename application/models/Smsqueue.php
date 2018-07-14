@@ -142,6 +142,35 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_uid = '';
 
     /**
+     * 回调成功的数量
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_pull_num = 0;
+
+    /**
+     * 回调回来的数据
+     * 
+     * Column Type: text
+     * 
+     * @var string
+     */
+    protected $_pull = null;
+
+    /**
+     * 更新时间
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_updated_at = 0;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -497,6 +526,85 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 回调成功的数量
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @param int $pull_num
+     * @return \SmsqueueModel
+     */
+    public function setPull_num($pull_num) {
+        $this->_pull_num = (int)$pull_num;
+        $this->_params['pull_num'] = (int)$pull_num;
+        return $this;
+    }
+
+    /**
+     * 回调成功的数量
+     * 
+     * Column Type: int(11)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getPull_num() {
+        return $this->_pull_num;
+    }
+
+    /**
+     * 回调回来的数据
+     * 
+     * Column Type: text
+     * 
+     * @param string $pull
+     * @return \SmsqueueModel
+     */
+    public function setPull($pull) {
+        $this->_pull = (string)$pull;
+        $this->_params['pull'] = (string)$pull;
+        return $this;
+    }
+
+    /**
+     * 回调回来的数据
+     * 
+     * Column Type: text
+     * 
+     * @return string
+     */
+    public function getPull() {
+        return $this->_pull;
+    }
+
+    /**
+     * 更新时间
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @param int $updated_at
+     * @return \SmsqueueModel
+     */
+    public function setUpdated_at($updated_at) {
+        $this->_updated_at = (int)$updated_at;
+        $this->_params['updated_at'] = (int)$updated_at;
+        return $this;
+    }
+
+    /**
+     * 更新时间
+     * 
+     * Column Type: bigint(20)
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getUpdated_at() {
+        return $this->_updated_at;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -515,7 +623,10 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'total_num'  => $this->_total_num,
             'send_num'   => $this->_send_num,
             'success'    => $this->_success,
-            'uid'        => $this->_uid
+            'uid'        => $this->_uid,
+            'pull_num'   => $this->_pull_num,
+            'pull'       => $this->_pull,
+            'updated_at' => $this->_updated_at
         );
     }
 
