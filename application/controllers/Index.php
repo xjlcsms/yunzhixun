@@ -46,10 +46,12 @@ class IndexController extends \Base\ApplicationController
         $smser = new \Ku\Sms\Adapter('yunzhixun');
         $driver = $smser->getDriver();
         $driver->setType(0);
-        $driver->setAccount('b00bp2');
-        $driver->setPassword('d424eb6c');
-        $driver->setPhones('13606061652');
-        $driver->setMsg('【测试】云之讯的测试');
+        $driver->setAccount('b00783');
+        $driver->setPassword('b127d1f1');
+        $driver->setPhones('13386936061');
+        $uid = date('ymdHis').mt_rand(1000, 9999);
+        $driver->setUid($uid);
+        $driver->setMsg('【测试】云之讯的拉取测试');
         $result = $driver->send();
         if($result === false){
             var_dump($driver->getError());
@@ -62,10 +64,9 @@ class IndexController extends \Base\ApplicationController
     public function testAction(){
         $smser = new \Ku\Sms\Adapter('yunzhixun');
         $driver = $smser->getDriver();
-        $driver->setType(0);
-        $driver->setAccount('b00bp2');
-        $driver->setPassword('d424eb6c');
-        $result = $driver->push();
+        $driver->setAccount('b00783');
+        $driver->setPassword('b127d1f1');
+        $result = $driver->pull();
         if($result === false){
             var_dump($driver->getError());
         }else{

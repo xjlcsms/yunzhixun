@@ -27,10 +27,24 @@ class SmsqueueModel extends \Mapper\AbstractModel
             return null;
         }
         $model->setStatus(1);
+        $model->setUpdated_at(date('YmdHis'));
         $this->update($model);
         return $model;
     }
 
+
+    /**获取需要拉取回调的数据
+     * @return \Base\Model\AbstractModel|null
+     */
+    public function pullsms(){
+        $where = array('success !=0','success >pull_num');
+        $order = array('updates_at asc');
+        $madel = $this->fetch($where,$order);
+        if(!$madel instanceof \SmsqueueModel){
+            return null;
+        }
+        return $madel;
+    }
 
 
 }

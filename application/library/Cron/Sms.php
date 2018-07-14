@@ -5,8 +5,19 @@ namespace Cron;
 class Sms extends \Cron\CronAbstract {
 
     private $_smsId = 'yunzhixun.sms.id.%s';
+    private $_pullId = 'yunzhixun.pull.%s.id.%s';
+
 
     public function main() {
+        $func = $this->getArgv(2);
+        call_user_func(array('\Cron\Sms', $func));
+    }
+
+    /**群发短信队列处理
+     * @return bool
+     * @throws Exception
+     */
+    public function smsAll(){
         $mapper = \Mapper\SmsqueueModel::getInstance();
         $business = \Business\SmsModel::getInstance();
         $userBusiness = \Business\UserModel::getInstance();
@@ -27,6 +38,7 @@ class Sms extends \Cron\CronAbstract {
             if(!$task instanceof \SendtasksModel){
                 $this->log('Id:'.$model->getId().':fail,任务不存在');
                 $model->setStatus(4);
+                $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
             }
@@ -34,6 +46,7 @@ class Sms extends \Cron\CronAbstract {
             if(!$user instanceof \UsersModel){
                 $this->log('Id:'.$model->getId().':fail,用户不存在');
                 $model->setStatus(4);
+                $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
             }
@@ -41,12 +54,14 @@ class Sms extends \Cron\CronAbstract {
             if($result === false or !isset($result['total_fee']) ){
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
                 $model->setStatus(4);
+                $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
             }
             if($result['total_fee'] == 0){
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
                 $model->setStatus(4);
+                $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
             }
@@ -68,13 +83,58 @@ class Sms extends \Cron\CronAbstract {
             }
             $model->setSuccess($sendNum);
             $model->setCallback(json_encode($result));
+            $model->setUpdated_at(date('YmdHis'));
             $mapper->update($model);
         }
         return false;
     }
 
-    
 
-
+    public function allPull(){
+        $mapper = \Mapper\SmsqueueModel::getInstance();
+        $begin = time();
+        while (time() - $begin <60){
+            $model = $mapper->pullsms();
+            if(!$model instanceof \SmsqueueModel){
+                sleep(1);
+                continue;
+            }
+            if((time() - strtotime($model->getUpdated_at())) <3){
+                sleep(2);
+            }
+            $this->log('Id:'.$model->getId().':start');
+            $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
+            $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
+            if(!$user instanceof \UsersModel){
+                $this->fail($model->getId().':发送用户不存在');
+                continue;
+            }
+            $smser = new \Ku\Sms\Adapter('yunzhixun');
+            $driver = $smser->getDriver();
+            $driver->setAccount($user->getAccount());
+            $driver->setPassword($user->getRaw_password());
+            $result = $driver->pull();
+            if($result === false){
+                $this->fail($model->getId().':'.$driver->getError());
+                continue;
+            }
+            if($result['code'] !==0){
+                $this->fail($model->getId().':拉取数据失败');
+                continue;
+            }
+            if(empty($result['data'])){
+                continue;
+            }
+            $business = \Business\SmsModel::getInstance();
+            foreach ($result['data'] as $data){
+                $res = $business->pullAll($data);
+                if(!$res){
+                    $message = $business->getMessage();
+                    $this->fail($model->getId().':'.json_encode($data).'：'.$message['msg']);
+                }
+            }
+        }
+        return false;
+    }
 
 }

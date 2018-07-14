@@ -92,7 +92,7 @@ abstract class DriverAbstract {
     }
 
     abstract public function send();
-    abstract public function push();
-    abstract public function pushup();
+    abstract public function pull();
+    abstract public function pullup();
 }
 

@@ -168,34 +168,34 @@ class SmsModel  extends \Business\AbstractModel
     }
 
 
-    /**创建模型记录表数据
-     * @param $taskid
-     * @param $result
-     * @param $uid
-     * @param $content
-     * @param $type
-     * @param $mobiles
-     * @param string $driver
-     * @param bool $isfail
-     * @return mixed
+
+    /**拉取的回调数据存入数据库
+     * @param array $result
+     * @return bool
      */
-    public function saveReturnData($taskid,$result,$uid,$content,$type,$mobiles,$driver='云之讯',$isfail = false){
-        $mapper = \Mapper\SmsrecordsModel::getInstance();
-        $model = new \SmsrecordsModel();
-        $model->setReturn_data($result['data']);
-        $model->setFee($result['total_fee']);
-        $model->setTask_id($taskid);
-        $model->setUid($uid);
-        $model->setType($type);
-        $model->setContent($content);
-        $model->setCreated_at(date('YmdHis'));
-        $model->setUpdated_at(date('YmdHis'));
-        $model->setDriver($driver);
-        $model->setMobiles(implode(',',$mobiles));
-        if($isfail===true){
-            $model->setIsfail(1);
+    public function pullAll(array $result){
+        $mapper = \Mapper\SmsqueueModel::getInstance();
+        $uid = $result['uid'];
+        $queue = $mapper->findByUid($uid);
+        if(!$queue instanceof \SmsqueueModel){
+            return $this->getMsg('没有找到对应的uid队列',10020);
         }
-        return $mapper->insert($model);
+        $pull = json_decode($queue->getPull());
+        if(empty($pull)){
+            $pull = [];
+        }
+        array_push($pull,$result);
+        $mapper->begin();
+        $update = array('pull'=>json_encode($pull),'pull_num'=>'pull_num+1','updated_at'=>date('Ymdhis'));
+        $res = $mapper->update($update,array('Id'=>$queue->getId()));
+        if(!$res){
+            $mapper->rollback();
+            return $this->getMsg('更新数据失败',10022);
+        }
+        $mapper->commit();
+        return $res;
     }
+
+
 
 }

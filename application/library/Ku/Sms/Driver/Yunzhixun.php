@@ -33,7 +33,7 @@ class Yunzhixun extends \Ku\Sms\DriverAbstract {
     }
 
 
-    public function push(){
+    public function pull(){
         $service = '/report/%s/getreport';
         $url = sprintf($this->mt.$service,$this->getAccount());
         $password = substr(md5($this->getPassword()),-32);
@@ -53,7 +53,7 @@ class Yunzhixun extends \Ku\Sms\DriverAbstract {
         }
     }
 
-    public function pushup(){
+    public function pullup(){
         $service = '/report/%s/getmo';
         $url = sprintf($this->mt.$service,$this->getAccount());
         $password = substr(md5($this->getPassword()),-32);
