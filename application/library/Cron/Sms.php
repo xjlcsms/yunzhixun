@@ -5,7 +5,7 @@ namespace Cron;
 class Sms extends \Cron\CronAbstract {
 
     private $_smsId = 'yunzhixun.sms.id.%s';
-    private $_fileFirst = APPLICATION_PATH.'/data/sms/';
+    private $_fileFirst = APPLICATION_PATH.'/public//uploads/sms/';
 
     public function main() {
         $func = $this->getArgv(2);
@@ -136,6 +136,9 @@ class Sms extends \Cron\CronAbstract {
         return false;
     }
 
+    /**
+     *已获取回调的数据导入至文件保存
+     */
     public function exportSms(){
         $key = 'import_sms_pull_over_%s';
         $mapper = \Mapper\SmsqueueModel::getInstance();
@@ -160,8 +163,84 @@ class Sms extends \Cron\CronAbstract {
                 $this->fail($model->getId().':发送用户不存在');
                 continue;
             }
-            $fileName = 'task_'.$task->getId();
+            $res = \Ku\Tool::makeDir($this->_fileFirst);
+            if($res){
+                $this->log('创建目录失败:'.$this->_fileFirst);
+                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+                continue;
+            }
+            $str = '';
+            $pulls = json_decode($model->getPull());
+            foreach ($pulls as $pull){
+                $statusStr = $pull['report_status']=='SUCCESS'?'成功':'';
+                $str .= $pull['mobile'].','.$model->getContent().','.$statusStr.','.$pull['user_receive_time']."\n";
+            }
+            if(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows nt')){
+                $str = mb_convert_encoding($str,'gbk','utf-8');
+            }
+           $fileName = 'task_'.$task->getId();
+           if(!file_exists($this->_fileFirst.$fileName)){
+                $header = '发送手机号,发送内容,发送状态,到达时间'."\n";
+                $str = $header.$str;
+            }
+            $fp = fopen($this->_fileFirst.$fileName,'a');
+            $str = mb_convert_encoding($str,'gbk','utf-8');
+            $res = fwrite($fp,$str);
+            fclose($fp);
+            if($res <= 0){
+                $this->log('队列Id:'.$model->getId().'写入文件失败');
+                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+                continue;
+            }
+            $mapper->begin();
+            $addres = $copyMapper->insert($model);
+            if(!$addres){
+                $mapper->rollback();
+                $this->log('队列Id:'.$model->getId().'数据备份失败');
+                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+                continue;
+            }
+            $delres = $mapper->del(array('id'=>$model->getId()));
+            if(!$delres){
+                $mapper->rollback();
+                $this->log('队列Id:'.$model->getId().'数据删除失败');
+                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+                continue;
+            }
+            $mapper->commit();
+            $this->log('队列Id:'.$model->getId().'数据导入至文件成功');
+            $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
         }
+    }
+
+
+    /**更新已拉取完回调数据的发送任务
+     * @return bool
+     */
+    public function pullStatus(){
+        $mapper = \Mapper\SendtasksModel::getInstance();
+        $queueMapper = \Mapper\SmsqueueModel::getInstance();
+        $where = array('pull_status'=>0,"created_at >=2018-07-16 00:00:00'",'quantity >0');
+        $sendTasks = $mapper->fetchAll($where,array('created_at desc'));
+        if(empty($sendTasks)){
+            $this->log('没有需要更新拉取状态的发送任务');
+            return false;
+        }
+        foreach ($sendTasks as $task){
+            $queue = $queueMapper->fetch(array('task_id'=>$task->getId()));
+            if($queue instanceof \SmsqueueModel){
+                continue;
+            }
+            $task->setPull_status(1);
+            $task->setUpdated_at(date('Y-m-d H:i:s'));
+            $res = $mapper->update($task);
+            if(!$res){
+                $this->fail($task->getId().'：更新状态失败');
+                continue;
+            }
+            $this->log($task->getId().'：更新状态成功');
+        }
+        return false;
     }
 
 }

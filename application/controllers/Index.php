@@ -61,7 +61,7 @@ class IndexController extends \Base\ApplicationController
         return false;
     }
 
-    public function testAction(){
+    public function testpullAction(){
         $smser = new \Ku\Sms\Adapter('yunzhixun');
         $driver = $smser->getDriver();
         $driver->setAccount('b00783');
@@ -72,6 +72,22 @@ class IndexController extends \Base\ApplicationController
         }else{
             var_dump($result);
         }
+        return false;
+    }
+    private $_fileFirst = APPLICATION_PATH.'/public//uploads/sms/';
+    public function test(){
+        $this->disableLayout();
+        $this->disableView();
+        $res = \Ku\Tool::makeDir($this->_fileFirst);
+        $fileName = 'task_123.csv';
+        $str = file_get_contents($this->_fileFirst.$fileName);
+        $str = mb_convert_encoding($str,'utf-8','gbk');
+        header('Content-type:text/csv');
+        header('Content-Disposition:attachment;filename=' . $fileName);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        echo $str;
         return false;
     }
 
