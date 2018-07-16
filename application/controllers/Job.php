@@ -17,7 +17,7 @@ class JobController extends Base\ApplicationController{
         $uwhere = [];
         $username = $this->getParam('username','','string');
         $company = $this->getParam('company','','string');
-        if(!empty($userid)){
+        if(!empty($username)){
             $uwhere[] = "username like '%".$username."%'";
         }
         if(!empty($company)){
@@ -45,6 +45,61 @@ class JobController extends Base\ApplicationController{
         $this->assign('pager', $pager);
         $this->assign('username',$username);
         $this->assign('company',$company);
+        $this->assign('sendTypes',$this->_sendTypes);
+    }
+
+    public function dealAction(){
+        $mapper = \Mapper\SendtasksModel::getInstance();
+        $where = array();
+        $uwhere = [];
+        $company = $this->getParam('company','','string');
+        if(!empty($company)){
+            $uwhere[] = "company like '%".$company."%'";
+        }
+        if(!empty($uwhere)){
+            $userids = \Mapper\UsersModel::getInstance()->fetchAll($uwhere,null,0,0,array('id'),false);
+            $ids = [];
+            foreach ($userids as $userid){
+                $ids = $userid['id'];
+            }
+            if(empty($ids)){
+                $where[] = '1=2';
+            }else{
+                $where[] = 'user_id in('.implode(',',$ids).')';
+            }
+        }
+        $time = $this->getParam('time','','string');
+        if(!empty($time)){
+            $timeArr = explode('-',$time);
+            $begin = date('Y-m-d H:i:s',strtotime(trim($timeArr[0])));
+            $end = date('Y-m-d H:i:s',strtotime(trim($timeArr[1])));
+            $where[] = "created_at >='".$begin." 00:00:00' and created_at <= '".$end." 23:59:59'";
+        }
+        $type = $this->getParam('type','','int');
+        if(!empty($type)){
+            $where['sms_type'] = $type;
+        }
+        $sign = $this->getParam('sign','','string');
+        if(!empty($sign)){
+            $where[] = "sign like'%".$sign."%'";
+        }
+        $content = $this->getParam('content','','string');
+        if(!empty($content)){
+            $where[] = "content like'%".$sign."%'";
+        }
+        $select = $mapper->select();
+        $select->where($where);
+        $select->order(array('created_at deac'));
+        $page = $this->getParam('page', 1, 'int');
+        $pagelimit = $this->getParam('pagelimit', 15, 'int');
+        $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
+        $this->assign('pager', $pager);
+        $this->assign('time',$time);
+        $this->assign('company',$company);
+        $this->assign('sign',$sign);
+        $this->assign('type',$type);
+        $this->assign('content',$content);
+        $this->assign('sendTypes',$this->_sendTypes);
     }
 
     /**
