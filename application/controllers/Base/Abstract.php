@@ -337,13 +337,26 @@ class AbstractController extends \Yaf\Controller_Abstract {
      * 获取参数
      * @param string $key
      * @param 默认值 $default
-     * @return string|int|arra
+     * @return string|int|array
      */
-    protected function getParam($key, $default = '') {
+    protected function getParam($key, $default = '', $filter = 'trim') {
         $request = $this->getRequest();
         $param = $request->get($key, $default);
         if (is_string($param)) {
             $param = trim($param);
+        }
+        switch ($filter) {
+            case 'trim':
+                return trim($param);
+                break;
+            case 'int':
+                return abs(intval($param));
+                break;
+            case 'string':
+                return \Ku\Tool::filter($param);
+            default:
+                # code...
+                break;
         }
         return $param;
     }

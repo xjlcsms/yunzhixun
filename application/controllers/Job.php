@@ -48,6 +48,9 @@ class JobController extends Base\ApplicationController{
         $this->assign('sendTypes',$this->_sendTypes);
     }
 
+    /**
+     * 处理记录
+     */
     public function dealAction(){
         $mapper = \Mapper\SendtasksModel::getInstance();
         $where = array();
@@ -160,7 +163,7 @@ class JobController extends Base\ApplicationController{
         }
         //发送的总数
         $totalfee = $smsBusiness->totalFee($mobiles,$content);
-        $virefy = $smsBusiness->virefy($user,$content,$totalfee);
+        $virefy = $smsBusiness->virefy($user,$content,$type,$totalfee);
         if(!$virefy){
             $message = $smsBusiness->getMessage();
             return $this->returnData($message['msg'],$message['code']);

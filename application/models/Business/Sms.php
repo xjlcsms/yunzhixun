@@ -22,7 +22,7 @@ class SmsModel  extends \Business\AbstractModel
      */
     public function sms(\UsersModel $user,\SmsqueueModel $sms){
         if(!isset($this->_yzxSmsTypes[$sms->getType()])){
-            return $this->getMsg('请检查发送的类型',29212);
+            return $this->getMsg(29212,'请检查发送的类型');
         }
         $smser = new \Ku\Sms\Adapter('yunzhixun');
         $driver = $smser->getDriver();
@@ -50,19 +50,19 @@ class SmsModel  extends \Business\AbstractModel
      */
     public function virefy(\UsersModel $user,$content,$type,$sendTotal){
         if(!in_array($type , $this->_userTypes[$user->getType()])){
-            return $this->getMsg('发送的短信类型与用户类型不一致',29209);
+            return $this->getMsg(29209,'发送的短信类型与用户类型不一致');
         }
         $strlen = mb_strlen($content);
         if($strlen>500){
-            return $this->getMsg('消息长度不能超过500字',29206);
+            return $this->getMsg(29206,'消息长度不能超过500字');
         }
         if($user->getType()==1){
             if($user->getShow_normal_balance()<$sendTotal){
-                return $this->getMsg('行业短信余额不足',29210);
+                return $this->getMsg(29210,'行业短信余额不足');
             }
         }else{
             if($user->getShow_marketing_balance()<$sendTotal){
-                return $this->getMsg('营销短信余额不足',29210);
+                return $this->getMsg(29210,'营销短信余额不足');
             }
         }
         return true;
@@ -190,12 +190,10 @@ class SmsModel  extends \Business\AbstractModel
         $res = $mapper->update($update,array('Id'=>$queue->getId()));
         if(!$res){
             $mapper->rollback();
-            return $this->getMsg('更新数据失败',10022);
+            return $this->getMsg(10022,'更新数据失败');
         }
         $mapper->commit();
         return $res;
     }
-
-
 
 }

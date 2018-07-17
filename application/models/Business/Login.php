@@ -137,7 +137,7 @@ class LoginModel  extends \Business\AbstractModel{
 
         $lastTime = $memberModel->getUpdated_at();
 
-        $memberMapper->lastLogin($memberModel);
+//        $memberMapper->lastLogin($memberModel);
         $this->setLogin($memberModel->getId(), array(\Ku\Consts::LAST_LOGIN_TIME => $lastTime));
         $this->_member = $memberModel;
         $this->rememberlogin($remember);

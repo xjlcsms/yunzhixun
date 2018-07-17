@@ -21,7 +21,7 @@ resources.redis.options.prefix = 'xjlc'
 phpSettings.mbstring.internal_encoding      = "utf-8"
 phpSettings.session.save_handler            = "redis"
 phpSettings.session.save_path               = "tcp://127.0.0.1:6379?timeout=10&database=9&auth="
-phpSettings.session.cookie_domain           = ".xjlc.com"
+phpSettings.session.cookie_domain           = ".yzx.com"
 phpSettings.session.session.cookie_httponly = 1
 
 
