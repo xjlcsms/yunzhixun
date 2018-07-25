@@ -1,4 +1,5 @@
 (function() {
+    console.log('test');
   var userid = ''
   // 充值
   $('.recharge').click(function() {

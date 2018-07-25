@@ -115,13 +115,18 @@ class View extends \Yaf\View\Simple {
 	 *        	
 	 * @return string The view or include template output.
 	 */
-	public function renderTpl($tpl, $tpl_vars = array()) {
+	public function renderTpl($tpl, $tpl_vars = array(),$module = 'index') {
 		/*
 		 * 嵌套的模板, 为了防止里层的变量穿透到外层, 所以才用了 clone.
 		 * 这与Layout的嵌套是不一样的.
 		 */
 		$view = clone $this;
-		return $view->render ( $this->getScriptPath () . DIRECTORY_SEPARATOR . $tpl, $tpl_vars );
+		$path = $this->getScriptPath();
+		$dir = APPLICATION_PATH.DIRECTORY_SEPARATOR.'application';
+		if($module){
+			$path = ($module == 'index')?$dir.DIRECTORY_SEPARATOR.'views':$dir.DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'views';
+		}
+		return $view->render ( $path. DIRECTORY_SEPARATOR . $tpl, $tpl_vars );
 	}
 	
 	/**
@@ -182,8 +187,7 @@ class View extends \Yaf\View\Simple {
 				'=' 
 		), '/', http_build_query ( $params ) ) );
 		$query_uri = trim ( http_build_query ( $query ) );
-		
-		if (empty ( $params_uri )) {
+		if (empty ( $params_uri ) && $prefix['module'] == 'index') {
 			$prefix_uri = str_ireplace ( '/index', '', $prefix_uri );
 		}
 		

@@ -39,11 +39,6 @@ class Bootstrap extends Bootstrap_Abstract {
         Registry::set('config', $config);
     }
 
-    public function _initPlugin(Dispatcher $dispatcher) {
-            /* register a plugin */
-            $dispatcher->registerPlugin(new QrstatPlugin());
-        }
-
     /**
      * 重新设置一些PHP配置
      */
@@ -99,7 +94,7 @@ class Bootstrap extends Bootstrap_Abstract {
      * @param \Yaf\Dispatcher $dispatcher
      */
     public function _initLayout(Dispatcher $dispatcher) {
-        $layout = new \Ku\Layout($this->config->get('application.layout.directory'));
+        $layout = new \Ku\Layout($this->config->get('application.layout.directory'));//    /application/views/layouts
         $dispatcher->setView($layout);
         Registry::set('layout', $layout);
     }
@@ -173,8 +168,7 @@ class Bootstrap extends Bootstrap_Abstract {
         // 通过派遣器得到默认的路由器
         $router = $dispatcher->getRouter();
         if ($this->config->routes) {
-            $conf = new \Yaf\Config\Ini($this->config->routes);
-            $router->addConfig($conf->get('routes'));
+            $router->addConfig($this->config->routes);
         }
 
         // 添加一个以 Module\Controller\Acation 方式优先的路由.
@@ -193,14 +187,17 @@ class Bootstrap extends Bootstrap_Abstract {
         if (!$connects) {
             throw new \Exception('Not database configure', 503);
         }
+    
         if (isset($connects['multi'])) {
-            $connect = $connects['multi']['default'];
-        } else {
-            $connect = $connects;
+            $adapters = array_keys($connects['multi']->toArray());//array_keys  Return all the keys of an array
+            foreach ($adapters as $adapter) {
+                $dbAdapter = new ZendDbAdapter($connects['multi'][$adapter]->toArray());
+                Registry::set($adapter.'Adapter', $dbAdapter);
+            }
         }
-        $dbAdapter = new ZendDbAdapter($connect->toArray());
+        
 
-        Registry::set('defaultAdapter', $dbAdapter);
+
     }
     
     /**

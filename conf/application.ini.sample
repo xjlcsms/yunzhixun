@@ -6,8 +6,6 @@ application.directory = APPLICATION_PATH "/application/"
 application.view.ext = "phtml"
 application.layout.directory = APPLICATION_PATH "/application/views/layouts"
 application.modules = "Index"
-;路由配置文件
-routes = APPLICATION_PATH "/conf/route.ini"
 
 ;redis配置
 resources.redis.host = '127.0.0.1'

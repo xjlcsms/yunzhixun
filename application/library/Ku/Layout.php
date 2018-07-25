@@ -68,7 +68,6 @@ class Layout implements \Yaf\View_Interface {
         if (!$this->engine) {
             $this->engine = new View($this->tpl_dir, $this->options);
         }
-
         return $this->engine;
     }
 
