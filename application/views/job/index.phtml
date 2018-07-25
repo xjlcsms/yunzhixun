@@ -1,0 +1,75 @@
+<?php $this->display("public/header.phtml", array()); ?>
+  <?php $this->display("public/sidebar.phtml"); ?>
+    <?php $this->display("public/nav.phtml"); ?>
+    <div class="right_col" role="main">
+      <div class="">
+        <div class="row x_title">
+          <div class="col-md-6">
+            <h3>待处理任务</h3>
+          </div>
+        </div>
+        <div class="x_content">
+          <div class="text-muted font-13 m-b-30">
+            <div class="dataTables_wrapper dt-bootstrap no-footer">
+              <div class="row">
+                <div class="col-sm-9">
+                  <div class="col-sm-1">
+                    <label>
+                      <input type="text" class="form-control input-sm" placeholder="用户ID">
+                    </label>
+                  </div>
+                  <div class="col-sm-1">
+                    <label>
+                      <input type="text" class="form-control input-sm" placeholder="公司名称">
+                    </label>
+                  </div>
+                  <a class="btn btn-primary btn-sm">
+                    搜索
+                  </a>
+                </div>
+                <div class="col-sm-3">
+                  <div class="dataTables_filter">
+                    <label>
+                      <select class="form-control input-sm">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <table id="datatable" class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>用户ID</th>
+                        <th>公司名称</th>
+                        <th>号码归属地</th>
+                        <th>号码数量</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr>
+                        <td style="line-height: 34px">1</td>
+                        <td style="line-height: 34px">1</td>
+                        <td style="line-height: 34px">1</td>
+                        <td style="line-height: 34px">1</td>
+                        <td>
+                          <a class="btn btn-default btn-sm recharge" data-id="1">发送</a>
+                          <a class="btn btn-default btn-sm rollback" data-id="1">驳回</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+<?php echo $this->renderTpl('public/footer.phtml',array('addScript'=> array('/job/index.js')),'index');?>

@@ -1,0 +1,107 @@
+<?php $this->display("public/header.phtml", array()); ?>
+  <?php $this->display("public/sidebar.phtml"); ?>
+    <?php $this->display("public/nav.phtml"); ?>
+      <div class="right_col" role="main">
+        <div class="">
+          <div class="row x_title">
+            <div class="col-md-6">
+              <h3>模板管理</h3>
+            </div>
+          </div>
+          <div class="x_content">
+            <div class="text-muted font-13 m-b-30">
+              <div class="dataTables_wrapper dt-bootstrap no-footer">
+                <div class="row">
+                  <div class="col-sm-9">
+                      <span>审核状态</span>
+                      <label>
+                        <select class="form-control input-sm">
+                          <option value="10">sss</option>
+                          <option value="25">sss</option>
+                          <option value="50">sss</option>
+                        </select>
+                      </label>
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="签名">
+                      </label>
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="模板内容">
+                      </label>
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="用户ID">
+                      </label>
+                    <a class="btn btn-primary btn-sm">
+                      搜索
+                    </a>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="dataTables_filter">
+                      <label>
+                        <select class="form-control input-sm">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <table id="datatable" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>用户ID</th>
+                          <th>公司名称</th>
+                          <th>模板属性</th>
+                          <th>模板类型</th>
+                          <th>短信签名</th>
+                          <th>模板内容</th>
+                          <th>审核状态</th>
+                          <th>原因</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px;overflow: hidden;"><p style="width: 100px;cursor: pointer;" class="showcontent">11111111111122211111111111111111111111111111444441111111</p></td>
+                          <td style="line-height: 34px">1</td>
+                          <td style="line-height: 34px">1</td>
+                          <td>
+                            <a class="btn btn-default btn-sm recharge">审核</a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="modal fade bs-example-modal-md" id="detailModal">
+            <div class="modal-dialog modal-md" style="margin: 0;position: absolute;top: 40%;left: 50%;transform: translate(-40%,-50%);">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                  </button>
+                  <h4 class="modal-title">模板详细内容</h4>
+                </div>
+                <div class="modal-body">
+                  <textarea id="content" style="width: 100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" id="close">确定</button>
+                </div>
+              </div>
+            </div>
+          </div>
+<?php echo $this->renderTpl('public/footer.phtml',array('addScript'=> array('/template/index.js')),'index');?>
