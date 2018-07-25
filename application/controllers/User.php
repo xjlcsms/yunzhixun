@@ -43,7 +43,7 @@ class UserController extends \Base\ApplicationController
      *操作记录
      */
     public function recordsAction(){
-        $where = ['isdel'=>0];
+        $where = [];
         $userid = $this->getParam('userid','','int');
         $acount = $this->getParam('acount',0,'int');
         $direction = $this->getParam('direction',0,'int');

@@ -35,6 +35,7 @@ class ApplicationController extends \Base\AbstractController {
                 }
                 exit();
             }
+            $this->assign('adminUser',$info);
         }
 
     }
