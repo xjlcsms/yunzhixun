@@ -1,6 +1,11 @@
 <?php $this->display("public/header.phtml", array()); ?>
   <?php $this->display("public/sidebar.phtml"); ?>
     <?php $this->display("public/nav.phtml"); ?>
+    <style>
+      .none {
+        display: none;
+      }
+    </style>
     <div class="right_col" role="main">
       <div class="">
         <!-- 用户名单 start -->
@@ -150,4 +155,7 @@
             </div>
           </div>
         </div>
-<?php echo $this->renderTpl('public/footer.phtml',array('addScript'=> array('/user/index.js')),'index');?>
+      </div>
+    </div>
+    <script src="/script/user/index.js"></script>
+<?php $this->display("public/footer.phtml"); ?>

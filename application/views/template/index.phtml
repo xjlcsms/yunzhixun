@@ -85,8 +85,6 @@
               </div>
             </div>
           </div>
-
-
           <div class="modal fade bs-example-modal-md" id="detailModal">
             <div class="modal-dialog modal-md" style="margin: 0;position: absolute;top: 40%;left: 50%;transform: translate(-40%,-50%);">
               <div class="modal-content">
@@ -104,4 +102,29 @@
               </div>
             </div>
           </div>
-<?php echo $this->renderTpl('public/footer.phtml',array('addScript'=> array('/template/index.js')),'index');?>
+          <div class="modal fade bs-example-modal-md" id="auditModal">
+            <div class="modal-dialog modal-md" style="margin: 0;position: absolute;top: 40%;left: 50%;transform: translate(-40%,-50%);">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                  </button>
+                  <h4 class="modal-title">审核操作</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-offset-1 col-md-2"><p>审核原因</p></div>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control" placeholder="请输入审核原因">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" id="audit">下一步</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script src="/script/template/index.js"></script>
+<?php $this->display("public/footer.phtml"); ?>
