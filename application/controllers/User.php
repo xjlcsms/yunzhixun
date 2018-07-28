@@ -142,10 +142,29 @@ class UserController extends \Base\ApplicationController
             'show_marketing_balance'=>'show_marketing_balance+'.$recharge
             );
         $where = array('id'=>$userid);
+        $mapper->begin();
         $res = $mapper->update($update,$where);
         if(!$res){
+            $mapper->rollback();
             return $this->returnData('充值失败，请重试!',21008);
         }
+        $business = \Business\LoginModel::getInstance();
+        $admin = $business->getCurrentUser();
+        $model = new \RechargerecordsModel();
+        $model->setCreated_at(date('Y-m-d H:i:s'));
+        $model->setAdmin_id($admin->getId());
+        $model->setUpdated_at(date('Y-m-d H:i:s'));
+        $model->setUser_id($userid);
+        $model->setType($user->getType());
+        $model->getDirection(1);
+        $model->setAmount($recharge);
+        $model->setShow_amount($recharge);
+        $res = \Mapper\RechargerecordsModel::getInstance()->insert($model);
+        if(!$res){
+            $mapper->rollback();
+            return $this->returnData('添加充值记录失败!',21010);
+        }
+        $mapper->commit();
         return $this->returnData('充值成功',21009,true);
     }
 
@@ -164,6 +183,23 @@ class UserController extends \Base\ApplicationController
         if(empty($reback)){
             return $this->returnData('回退数量不能为零',21012);
         }
+        $mapper->begin();
+        $business = \Business\LoginModel::getInstance();
+        $admin = $business->getCurrentUser();
+        $model = new \RechargerecordsModel();
+        $model->setCreated_at(date('Y-m-d H:i:s'));
+        $model->setAdmin_id($admin->getId());
+        $model->setUpdated_at(date('Y-m-d H:i:s'));
+        $model->setUser_id($userid);
+        $model->setType($user->getType());
+        $model->getDirection(2);
+        $model->setAmount($reback);
+        $model->setShow_amount($reback);
+        $res = \Mapper\RechargerecordsModel::getInstance()->insert($model);
+        if(!$res){
+            $mapper->rollback();
+            return $this->returnData('添加充值记录失败!',21010);
+        }
         $update = array(
             'normal_balance'=>'normal_balance-'.$reback,
             'marketing_balance'=>'marketing_balance-'.$reback,
@@ -174,8 +210,10 @@ class UserController extends \Base\ApplicationController
         $where = array('id'=>$userid);
         $res = $mapper->update($update,$where);
         if(!$res){
+            $mapper->rollback();
             return $this->returnData('回退失败，请重试!',21013);
         }
+        $mapper->commit();
         return $this->returnData('回退成功',21011,true);
     }
 
@@ -200,7 +238,7 @@ class UserController extends \Base\ApplicationController
         if(!$res){
             return $this->returnData('重置密码失败，请重试',21017);
         }
-        return $this->returnData('修改成功',21016);
+        return $this->returnData('修改成功',21016,true);
     }
 
 
