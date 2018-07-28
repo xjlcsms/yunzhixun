@@ -1,6 +1,11 @@
 <?php $this->display("public/header.phtml", array()); ?>
   <?php $this->display("public/sidebar.phtml"); ?>
     <?php $this->display("public/nav.phtml"); ?>
+    <style type="text/css">
+      .tile_count .tile_stats_count .tile-num {
+        font-size: 40px
+      }
+    </style>
     <div class="right_col" role="main">
       <div class="">
          <!-- 任务统计 start -->
@@ -12,11 +17,11 @@
         <div class="row tile_count">
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>待处理任务</span>
-            <div class="count green">1项</div>
+            <div class="count green"><span id="jobnum" class="tile-num"></span>项</div>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>待审核模板</span>
-            <div class="count green">2个</div>
+            <div class="count green"><span id="tempnum" class="tile-num"></span>个</div>
           </div>
         </div>
         <!-- 任务统计 end -->
@@ -30,26 +35,29 @@
         <div class="row tile_count">
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>行业短信</span>
-            <div class="count green">1000条</div>
+            <div class="count green"><span id="generalSend" class="tile-num"></span>条</div>
             <span class="count_bottom">今日统计</span>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>营销短信</span>
-            <div class="count green">1000条</div>
+            <div class="count green"><span id="marketSend" class="tile-num"></span>条</div>
             <span class="count_bottom">今日统计</span>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>行业短信</span>
-            <div class="count green">2000条</div>
-            <span class="count_bottom">今日统计</span>
+            <div class="count green"><span id="general" class="tile-num"></span>条</div>
+            <span class="count_bottom">今日充值</span>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i class="fa fa-comments-o"></i>营销短信</span>
-            <div class="count green">2000条</div>
-            <span class="count_bottom">今日统计</span>
+            <div class="count green"><span id="market" class="tile-num"></span>条</div>
+            <span class="count_bottom">今日充值</span>
           </div>
         </div>
         <!-- 今日统计信息 end -->
       </div>
     </div>
+  </div>
+</div>
+<script src="/script/index/index.js"></script>
 <?php $this->display("public/footer.phtml"); ?>

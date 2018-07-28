@@ -1,5 +1,4 @@
 (function() {
-    console.log('test');
   var userid = ''
   // 充值
   $('.recharge').click(function() {
@@ -26,6 +25,7 @@
       userid: userid,
       reback: $('input[name=rollback]').val()
     }
+    console.log(params)
     $.post('/user/reback', params, function(res) {
       console.log(res)
     })
@@ -39,8 +39,9 @@
   $('#reset').click(function() {
     var params = {
       userid: userid,
-      resetpwd: $('input[name=reset]').val()
+      resetPwd: $('input[name=reset]').val()
     }
+    console.log(params);
     $.post('/user/resetpwd', params, function(res) {
       console.log(res)
     })
@@ -56,10 +57,10 @@
       userid: userid,
       resetpwd: $('input[name=surePwd]').val()
     }
-   delModalFina();
-    // $.post('/user/del', params, function(res) {
-    //   console.log(res)
-    // })
+    $.post('/user/del', params, function(res) {
+      console.log(res)
+      delModalFina();
+    })
   })
   $('#deleteSure').click(function() {
     $('#deleteModal').modal('hide');
