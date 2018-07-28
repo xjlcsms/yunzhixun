@@ -140,6 +140,7 @@ class JobController extends Base\ApplicationController{
         $taskid = $this->getParam('taskid',0,'int');
         $content = $this->getParam('content','','string');
         $task = \Mapper\SendtasksModel::getInstance()->findById($taskid);
+
         if(!$task instanceof \SendtasksModel){
             return $this->returnData('发送任务不存在',29204);
         }
@@ -179,20 +180,30 @@ class JobController extends Base\ApplicationController{
         }
         $mobiles = $smsBusiness->divideMobiles($mobiles);
         $smsMapper = \Mapper\SmsqueueModel::getInstance();
+        $smsMapper->begin();
         $model = new \SmsqueueModel();
         $model->setTask_id($taskid);
         $model->setContent($content);
         $model->setType($type);
+        $model->setCallback('');
+        $model->setPull('');
         foreach ($mobiles as $mobile){
            $data = $smsBusiness->trueMobiles($user,$mobile);
            $model->setCreated_at(date('Ymdhis'));
-           $model->setNot_arrive(implode(',',$data['fail']));
-           $model->setMobiles(implode(',',$data['true']));
+           $fail = implode(',',$data['fail']);
+           $model->setNot_arrive(empty($fail)?'':$fail);
+           $true = implode(',',$data['true']);
+           $model->setMobiles(empty($true)?'':$true);
            $model->setSend_num(count($data['true']));
            $model->setTotal_num(count($mobile));
-           $smsMapper->insert($model);
+           $res = $smsMapper->insert($model);
+           if($res === false){
+            $smsMapper->rollback();
+            return $this->returnData('发送失败',29200);
+           }
         }
-        return $this->returnData('发送成功',29201);
+        $smsMapper->commit();
+        return $this->returnData('发送成功',29201,true);
     }
 
 

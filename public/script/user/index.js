@@ -55,7 +55,7 @@
   $('#deletePrev').click(function() {
     var params = {
       userid: userid,
-      resetpwd: $('input[name=surePwd]').val()
+      surePwd: $('input[name=surePwd]').val()
     }
     $.post('/user/del', params, function(res) {
       console.log(res)

@@ -16,7 +16,7 @@
   		audit: 'adopted',
   		reason: ''
   	}
-  	$.post('/template/audit', {params}, function(res){
+  	$.post('/template/aduit', params, function(res){
   		console.log(res);
   	})
   })

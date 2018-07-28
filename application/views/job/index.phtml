@@ -26,6 +26,7 @@
                   <a class="btn btn-primary btn-sm">
                     搜索
                   </a>
+                  <a class="btn btn-default btn-sm" id="open">开户</a>
                 </div>
                 <div class="col-sm-3">
                   <div class="dataTables_filter">
@@ -72,4 +73,5 @@
           </div>
         </div>
 
-<?php echo $this->renderTpl('public/footer.phtml',array('addScript'=> array('/job/index.js')),'index');?>
+      <script src="/script/job/index.js"></script>
+<?php $this->display("public/footer.phtml"); ?>
