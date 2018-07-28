@@ -91,7 +91,7 @@ class UserController extends \Base\ApplicationController
         $type = $this->getParam('type',0,'int');
         $account = $this->getParam('account','','string');
         $rawPassword = $this->getParam('rawPassword','','string');
-        if(empty($username) || empty($passward)|| empty($access_key)|| empty($secret)|| empty($companyName)){
+        if(empty($username) || empty($passward)|| empty($account)|| empty($rawPassword)|| empty($companyName)){
             return $this->returnData('数据不能为空',21000);
         }
         if(strlen($passward)<6){
