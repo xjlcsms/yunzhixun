@@ -133,12 +133,13 @@ class UserController extends \Base\ApplicationController
         if(!$user instanceof \UsersModel){
             return $this->returnData('充值用户不存在',21007);
         }
+//        $time = date('Y-m-d H:i:s');
         $update = array(
+            'updated_at'=>date('Y-m-d H:i:s'),
             'normal_balance'=>'normal_balance+'.$recharge,
             'marketing_balance'=>'marketing_balance+'.$recharge,
             'show_normal_balance'=>'show_normal_balance+'.$recharge,
-            'show_marketing_balance'=>'show_marketing_balance+'.$recharge,
-            'updated_at'=>date('Y-m-d H:i:s'),
+            'show_marketing_balance'=>'show_marketing_balance+'.$recharge
             );
         $where = array('id'=>$userid);
         $res = $mapper->update($update,$where);

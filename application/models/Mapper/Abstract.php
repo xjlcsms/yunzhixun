@@ -421,9 +421,10 @@ class AbstractModel {
             unset($data['id']);
         }else{
             $data = $model;
+            $keys = array_keys($data);
             if(is_array($data)){
                 foreach ($data as $key => $value) {
-                    if(preg_match('/(\+|\-)/', $value,$matchs)){
+                    if(preg_match('/(\+|\-)/', $value,$matchs) && (in_array(trim(strtok($value,'+'),'`'),$keys)||in_array(trim(strtok($value,'-'),'`'),$keys))){
                         $data[$key] = $this->expression($value);
                     }
                 }
@@ -482,7 +483,7 @@ class AbstractModel {
         $sql = $this->sql();
         $select = $sql->select();
         $select->reset('columns');
-        $select->columns(array('total' => $this->expression('sum(`' . $column . '`)')));
+        $select->columns(array('total' => $this->expression('sum(' . $column . ')')));
         $select->where($predicate);
 
         try {
