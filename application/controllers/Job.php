@@ -187,11 +187,12 @@ class JobController extends Base\ApplicationController{
         $model->setType($type);
         $model->setCallback('');
         $model->setPull('');
+        $model->setUid('');
         foreach ($mobiles as $mobile){
            $data = $smsBusiness->trueMobiles($user,$mobile);
            $model->setCreated_at(date('Ymdhis'));
-           $fail = implode(',',$data['fail']);
-           $model->setNot_arrive(empty($fail)?'':$fail);
+           $fail = empty($fail)?'':implode(',',$data['fail']);
+           $model->setNot_arrive($fail);
            $true = implode(',',$data['true']);
            $model->setMobiles(empty($true)?'':$true);
            $model->setSend_num(count($data['true']));
