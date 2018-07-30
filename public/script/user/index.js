@@ -11,7 +11,11 @@
       recharge: $('input[name=recharge]').val()
     }
     $.post('/user/recharge', params, function(res) {
-      console.log(res)
+      if (res.status === true) {
+        location.reload();
+      } else {
+        alert(res.msg);
+      }
     })
   })
 
@@ -25,9 +29,12 @@
       userid: userid,
       reback: $('input[name=rollback]').val()
     }
-    console.log(params)
     $.post('/user/reback', params, function(res) {
-      console.log(res)
+      if (res.status === true) {
+        location.reload();
+      } else {
+        alert(res.msg);
+      }
     })
   })
 
@@ -41,9 +48,12 @@
       userid: userid,
       resetPwd: $('input[name=reset]').val()
     }
-    console.log(params);
     $.post('/user/resetpwd', params, function(res) {
-      console.log(res)
+      if (res.status === true) {
+        location.reload();
+      } else {
+        alert(res.msg);
+      }
     })
   })
 
@@ -58,13 +68,31 @@
       surePwd: $('input[name=surePwd]').val()
     }
     $.post('/user/del', params, function(res) {
-      console.log(res)
-      delModalFina();
+      if (res.status === true) {
+        delModalFina();
+      } else {
+        alert(res.msg)
+      }
     })
   })
   $('#deleteSure').click(function() {
-    $('#deleteModal').modal('hide');
     delModalInit();
+    $('#deleteModal').modal('hide');
+  })
+
+  // 开户
+  $('#open').click(function() {
+    $('#openModal').modal('show');
+  })
+  $('#openBtn').click(function() {
+    var params = $('#userForm').serializeArray();
+    $.post('/user/insert', params, function(res) {
+      if (res.status === true) {
+        location.reload();
+      } else {
+        alert(res.msg);
+      }
+    })
   })
 })()
 

@@ -111,12 +111,28 @@
                   <h4 class="modal-title">审核操作</h4>
                 </div>
                 <div class="modal-body">
-                  <div class="row">
-                    <div class="col-md-offset-1 col-md-2"><p>审核原因</p></div>
-                    <div class="col-md-8">
-                      <input type="text" class="form-control" placeholder="请输入审核原因">
+                  <form class="form-horizontal form-label-left" id="auditForm">
+                  <div class="form-group">
+                    <label class="control-label col-sm-3">审核结果</label>
+                    <div class="col-md-9 col-sm-9 col-xs-12">
+                      <div class="radio col-md-3" style="padding-left: 0px; padding-right: 0px">
+                        <label><input type="radio" name="audit" value="adopted" checked>通过</label>
+                      </div>
+                      <div class="radio col-md-3" style="padding-left: 0px; padding-right: 0px">
+                        <label><input type="radio" name="audit" value="not_adopted ">不通过</label>
+                      </div>
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3">审核原因</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input type="text" name="id" value="1" hidden="">
+                      <input name="reason" type="text" class="form-control" placeholder="请输入审核原因">
+                    </div>
+                    <div style="clear: both;overflow: hidden;"></div>
+                    <p class="col-sm-offset-3" style="margin-top: 5px;padding-left: 11px;color: #d9534f;">若选择不通过，则审核原因必须输入</p>
+                  </div>
+                </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-primary" id="audit">下一步</button>

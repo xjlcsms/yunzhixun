@@ -11,13 +11,14 @@
     $('#detailModal').modal('hide');
   })
   $('#audit').click(function() {
-  	var params = {
-  		id: 1,
-  		audit: 'adopted',
-  		reason: ''
-  	}
+    var params = $('#auditForm').serializeArray();
+    console.log(params)
   	$.post('/template/aduit', params, function(res){
-  		console.log(res);
+  		if (res.status === true) {
+        location.reload();
+      } else {
+        alert(res.msg);
+      }
   	})
   })
 })()

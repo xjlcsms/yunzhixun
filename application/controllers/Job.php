@@ -110,7 +110,7 @@ class JobController extends Base\ApplicationController{
      * @throws ErrorException
      */
     public function sendAction(){
-        $taskid = $this->getParam('id',0,'int');
+        $taskid = $this->getParam('id',1,'int');
         $mapper = \Mapper\SendtasksModel::getInstance();
         $task = $mapper->fetch(array('id'=>$taskid,'status'=>0,'type'=>2));
         if(!$task instanceof \SendtasksModel){

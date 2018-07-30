@@ -1,0 +1,21 @@
+<?php $this->display("public/header.phtml", array()); ?>
+  <?php $this->display("public/sidebar.phtml"); ?>
+    <?php $this->display("public/nav.phtml"); ?>
+    <div class="right_col" role="main">
+      <div class="">
+        <div class="row x_title">
+          <div class="col-md-6">
+            <h3>短信发送</h3>
+          </div>
+        </div>
+        <div class="x_content">
+          <div class="text-muted font-13 m-b-30">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/script/job/index.js"></script>
+<?php $this->display("public/footer.phtml"); ?>
