@@ -119,10 +119,9 @@ class JobController extends Base\ApplicationController{
         $this->assign('task',$task->toArray());
         if($task->getIs_template() == 1){
             $temp = \Mapper\TemplatesModel::getInstance()->fetch(array('Id'=>$task->getTemplate_id(),'status'=>1));
-            if(!$temp instanceof \TemplatesModel){
-                throw new ErrorException('模板不存在');
+            if($temp instanceof \TemplatesModel){
+                $this->assign('temp',$temp->toArray());
             }
-            $this->assign('temp',$temp->toArray());
         }
         $this->assign('sendTypes',$this->_sendTypes);
     }
