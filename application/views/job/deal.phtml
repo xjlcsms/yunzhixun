@@ -17,27 +17,29 @@
                       <span>子账户</span>
                       <label>
                         <select class="form-control input-sm">
-                          <option value="10">sss</option>
-                          <option value="25">sss</option>
-                          <option value="50">sss</option>
+                            <option value="0">全部</option>
+                            <?php foreach ($this->users as $key =>$value):?>
+                                <option value="<?php echo $key;?>" <?php echo $key==$this->userid?'selected':'';?>><?php echo $value;?></option>
+                            <?php endforeach;?>
                         </select>
                       </label>
                       <label>
-                        <input type="text" class="form-control input-sm" placeholder="公司名称">
+                        <input type="text" class="form-control input-sm" placeholder="公司名称" value="<?php echo $this->company;?>">
                       </label>
                       <span>短信类型</span>
                       <label>
                         <select class="form-control input-sm">
-                          <option value="10">sss</option>
-                          <option value="25">sss</option>
-                          <option value="50">sss</option>
+                            <option value="0">全部</option>
+                            <?php foreach ($this->sendTypes as $key =>$value):?>
+                                <option value="<?php echo $key;?>" <?php echo $key==$this->type?'selected':'';?>><?php echo $value;?></option>
+                            <?php endforeach;?>
                         </select>
                       </label>
                       <label>
-                        <input type="text" class="form-control input-sm" placeholder="短信签名">
+                        <input type="text" class="form-control input-sm" placeholder="短信签名" value="<?php echo $this->sign;?>">
                       </label>
                       <label>
-                        <input type="text" class="form-control input-sm" placeholder="短信内容">
+                        <input type="text" class="form-control input-sm" placeholder="短信内容" value="<?php echo $this->content;?>">
                       </label>
                       <div id="reportrange_right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;display: inline-block;">
                         <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
@@ -79,21 +81,30 @@
                         </tr>
                       </thead>
 
-                      <tbody>
-                        <tr>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                          <td style="line-height: 34px">1</td>
-                        </tr>
-                      </tbody>
+                    <?php if(!empty($this->pager->getList())):?>
+                        <?php $mapper = \Mapper\UsersModel::getInstance();?>
+                        <?php foreach ($this->pager->getList() as $key=>$value):?>
+                            <tbody>
+                            <tr>
+                              <td style="line-height: 34px"><?php echo $mapper->getUsername($value['user_id']);?></td>
+                              <td style="line-height: 34px"><?php echo $mapper->getName($value['user_id']);?></td>
+                              <td style="line-height: 34px"><?php echo $value['area'];?></td>
+                              <td style="line-height: 34px"><?php echo $value['quantity'];?></td>
+                              <td style="line-height: 34px"><?php echo $value['billing_amount'];?></td>
+                              <td style="line-height: 34px"><?php echo $value['billing_count'];?></td>
+                              <td style="line-height: 34px"><?php echo $value['created_at'];?></td>
+                              <td style="line-height: 34px"><?php echo $this->sendTypes[$value['sms_type']];?></td>
+                              <td style="line-height: 34px"><?php echo $value['sign'];?></td>
+                              <td style="line-height: 34px"><?php echo $value['content'];?></td>
+                              <td style="line-height: 34px"><?php echo $this->status[$value['status']];?></td>
+                            </tr>
+                            </tbody>
+                    <?php endforeach;?>
+                <?php else:?>
+                    <tbody>
+                    <tr><td colspan="16">没有找到记录</td></tr>
+                    </tbody>
+                <?php endif;?>
                     </table>
                   </div>
                 </div>

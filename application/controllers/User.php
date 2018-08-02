@@ -75,8 +75,14 @@ class UserController extends \Base\ApplicationController
         $this->assign('acount',$acount);
         $this->assign('direction',$direction);
         $this->assign('time',$time);
-        $this->assign('acounts',$this->_accounts);
+        $this->assign('accounts',$this->_accounts);
         $this->assign('actions',$this->_actions);
+        $users = \Mapper\UsersModel::getInstance()->fetchAll(array('isdel'=>0));
+        $userData = [];
+        foreach ($users as $user){
+            $userData[$user->getId()] = $user->getUsername();
+        }
+        $this->assign('users',$userData);
     }
 
 

@@ -26,7 +26,7 @@ class DataController extends \Base\ApplicationController
      */
     public function jobnumAction(){
         $mapper = \Mapper\SendtasksModel::getInstance();
-        $where = array('status'=>0);
+        $where = array('status'=>0,'type'=>2);
         $num = $mapper->count($where);
         return $this->returnData('获取成功',25001,true,array('jobnum'=>$num));
     }

@@ -55,6 +55,11 @@ class JobController extends Base\ApplicationController{
         $mapper = \Mapper\SendtasksModel::getInstance();
         $where = array();
         $uwhere = [];
+        $userId = $this->getParam('userid','','int');
+        if(!empty($userId)){
+            $where['user_id'] = $userId;
+        }
+        $this->assign('userid',$userId);
         $company = $this->getParam('company','','string');
         if(!empty($company)){
             $uwhere[] = "company like '%".$company."%'";
@@ -103,6 +108,13 @@ class JobController extends Base\ApplicationController{
         $this->assign('type',$type);
         $this->assign('content',$content);
         $this->assign('sendTypes',$this->_sendTypes);
+        $users = \Mapper\UsersModel::getInstance()->fetchAll(array('isdel'=>0));
+        $userData = [];
+        foreach ($users as $user){
+            $userData[$user->getId()] = $user->getUsername();
+        }
+        $this->assign('users',$userData);
+        $this->assign('status',$mapper->getStatus());
     }
 
     /**
