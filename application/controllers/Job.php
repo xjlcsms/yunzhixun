@@ -180,15 +180,6 @@ class JobController extends Base\ApplicationController{
             $message = $smsBusiness->getMessage();
             return $this->returnData($message['msg'],$message['code']);
         }
-        $userBusiness = \Business\UserModel::getInstance();
-        $account = $type == 3?'market':'normal';
-        $res = $userBusiness->flow($user,0,$totalfee,$account);
-        if(!$res){
-            $config = \Yaf\Registry::get('config');
-            $key = $config->get('flow.error');
-            $redis = $this->getRedis();
-            $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_show','fee'=>$totalfee)));
-        }
         $mobiles = $smsBusiness->divideMobiles($mobiles);
         $smsMapper = \Mapper\SmsqueueModel::getInstance();
         $smsMapper->begin();
@@ -198,11 +189,12 @@ class JobController extends Base\ApplicationController{
         $model->setType($type);
         $model->setCallback('');
         $model->setPull('');
-        $model->setUid('');
         foreach ($mobiles as $mobile){
+           $uid = $taskid.date('ymdHis').mt_rand(1000, 9999);
+           $model->setUid($uid);
            $data = $smsBusiness->trueMobiles($user,$mobile);
            $model->setCreated_at(date('Ymdhis'));
-           $fail = empty($fail)?'':implode(',',$data['fail']);
+           $fail = empty($fail)?'':implode(',',$fail);
            $model->setNot_arrive($fail);
            $true = implode(',',$data['true']);
            $model->setMobiles(empty($true)?'':$true);
@@ -214,6 +206,19 @@ class JobController extends Base\ApplicationController{
             return $this->returnData('发送失败',29200);
            }
         }
+        $userBusiness = \Business\UserModel::getInstance();
+        $account = $type == 3?'market':'normal';
+        $res = $userBusiness->flow($user,0,$totalfee,$account);
+        if(!$res){
+            $config = \Yaf\Registry::get('config');
+            $key = $config->get('flow.error');
+            $redis = $this->getRedis();
+            $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_show','fee'=>$totalfee)));
+            $smsMapper->rollback();
+            $msg = $userBusiness->getMessage();
+            return $this->returnData($msg['msg'],29200);
+        }
+        \Mapper\SendtasksModel::getInstance()->update(array('pull_status'=>1),array('id'=>$taskid));
         $smsMapper->commit();
         return $this->returnData('发送成功',29201,true);
     }

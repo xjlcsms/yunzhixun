@@ -5,7 +5,7 @@ namespace Cron;
 class Sms extends \Cron\CronAbstract {
 
     private $_smsId = 'yunzhixun.sms.id.%s';
-    private $_fileFirst = APPLICATION_PATH.'/public//uploads/sms/';
+    private $_fileFirst = APPLICATION_PATH.'/public/uploads/sms/';
 
     public function main() {
         $func = $this->getArgv(2);
@@ -28,8 +28,8 @@ class Sms extends \Cron\CronAbstract {
                 continue;
             }
             //加锁防止冲突
-            $res = $this->locked(sprintf($this->_smsId,$model->getId()),__CLASS__,__FUNCTION__);
-            if($res){
+            $res = $this->locked(sprintf($this->_smsId,$model->getId()),__CLASS__,__FUNCTION__,1200);
+            if($res === false){
                 continue;
             }
             $this->log('Id:'.$model->getId().':start');
@@ -53,6 +53,7 @@ class Sms extends \Cron\CronAbstract {
             if($result === false or !isset($result['total_fee']) ){
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
                 $model->setStatus(4);
+                $model->setCallback(json_encode($result));
                 $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
@@ -61,6 +62,7 @@ class Sms extends \Cron\CronAbstract {
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
                 $model->setStatus(4);
                 $model->setUpdated_at(date('YmdHis'));
+                $model->setCallback(json_encode($result));
                 $mapper->update($model);
                 continue;
             }
@@ -84,6 +86,7 @@ class Sms extends \Cron\CronAbstract {
             $model->setCallback(json_encode($result));
             $model->setUpdated_at(date('YmdHis'));
             $mapper->update($model);
+            $this->success($model->getId());
         }
         return false;
     }
@@ -118,7 +121,8 @@ class Sms extends \Cron\CronAbstract {
                 continue;
             }
             if($result['code'] !==0){
-                $this->fail($model->getId().':拉取数据失败');
+//                $this->fail($model->getId().':未拉取到数据');
+                sleep(5);
                 continue;
             }
             if(empty($result['data'])){
@@ -132,6 +136,7 @@ class Sms extends \Cron\CronAbstract {
                     $this->fail($model->getId().':'.json_encode($data).'：'.$message['msg']);
                 }
             }
+            $this->success($model->getId());
         }
         return false;
     }
@@ -151,8 +156,8 @@ class Sms extends \Cron\CronAbstract {
                 continue;
             }
             //加锁防止冲突
-            $res = $this->locked(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
-            if($res){
+            $res = $this->locked(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__,1200);
+            if($res === false){
                 sleep(1);
                 continue;
             }
@@ -164,21 +169,21 @@ class Sms extends \Cron\CronAbstract {
                 continue;
             }
             $res = \Ku\Tool::makeDir($this->_fileFirst);
-            if($res){
+            if(!$res){
                 $this->log('创建目录失败:'.$this->_fileFirst);
                 $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
                 continue;
             }
             $str = '';
-            $pulls = json_decode($model->getPull());
+            $pulls = json_decode($model->getPull(),true);
             foreach ($pulls as $pull){
                 $statusStr = $pull['report_status']=='SUCCESS'?'成功':'';
                 $str .= $pull['mobile'].','.$model->getContent().','.$statusStr.','.$pull['user_receive_time']."\n";
             }
-            if(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows nt')){
-                $str = mb_convert_encoding($str,'gbk','utf-8');
-            }
-           $fileName = 'task_'.$task->getId();
+//            if(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows nt')){
+//                $str = mb_convert_encoding($str,'gbk','utf-8');
+//            }
+           $fileName = 'task_'.$task->getId().'.csv';
            if(!file_exists($this->_fileFirst.$fileName)){
                 $header = '发送手机号,发送内容,发送状态,到达时间'."\n";
                 $str = $header.$str;
@@ -200,6 +205,9 @@ class Sms extends \Cron\CronAbstract {
                 $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
                 continue;
             }
+            if($model->getTotal_num() != $model->getSuccess()){
+                \Mapper\SendtasksModel::getInstance()->update(array('status'=>3,'updated_at'=>date('Y-m-d H:i:s')),array('id'=>$model->getTask_id()));
+            }
             $delres = $mapper->del(array('id'=>$model->getId()));
             if(!$delres){
                 $mapper->rollback();
@@ -220,18 +228,21 @@ class Sms extends \Cron\CronAbstract {
     public function pullStatus(){
         $mapper = \Mapper\SendtasksModel::getInstance();
         $queueMapper = \Mapper\SmsqueueModel::getInstance();
-        $where = array('pull_status'=>0,"created_at >=2018-07-16 00:00:00'",'quantity >0');
+        $where = array('pull_status'=>1,"created_at >='2018-07-16 00:00:00'",'quantity >0');
         $sendTasks = $mapper->fetchAll($where,array('created_at desc'));
         if(empty($sendTasks)){
             $this->log('没有需要更新拉取状态的发送任务');
             return false;
         }
         foreach ($sendTasks as $task){
-            $queue = $queueMapper->fetch(array('task_id'=>$task->getId()));
-            if($queue instanceof \SmsqueueModel){
+            $queue = $queueMapper->fetch(array('task_id'=>$task->getId(),'status'=>2));
+            if($queue instanceof \SmsqueuecopyModel){
                 continue;
             }
-            $task->setPull_status(1);
+            $task->setPull_status(2);
+            if($task->getStatus() != 3){
+                $task->setStatus(1);
+            }
             $task->setUpdated_at(date('Y-m-d H:i:s'));
             $res = $mapper->update($task);
             if(!$res){
