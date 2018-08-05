@@ -33,6 +33,7 @@ class UserController extends \Base\ApplicationController
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
+        $this->assign('pagelimit',$pagelimit);
         $this->assign('pager', $pager);
         $this->assign('username',$username);
         $this->assign('name',$company);
@@ -71,6 +72,7 @@ class UserController extends \Base\ApplicationController
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit',$pagelimit);
         $this->assign('userid',$userid);
         $this->assign('acount',$acount);
         $this->assign('direction',$direction);

@@ -43,6 +43,7 @@ class JobController extends Base\ApplicationController{
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit', $pagelimit);
         $this->assign('username',$username);
         $this->assign('company',$company);
         $this->assign('sendTypes',$this->_sendTypes);
@@ -102,6 +103,7 @@ class JobController extends Base\ApplicationController{
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit', $pagelimit);
         $this->assign('time',$time);
         $this->assign('company',$company);
         $this->assign('sign',$sign);
