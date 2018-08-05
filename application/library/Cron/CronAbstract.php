@@ -15,7 +15,6 @@ abstract class CronAbstract {
         $this->conf = $conf;
         $this->initAdapter();
         $this->getRedis();
-        $this->getOldRedis();
         \Yaf\Registry::set('config', $conf);
     }
 
@@ -67,29 +66,6 @@ abstract class CronAbstract {
     }
 
 
-    protected function getOldRedis(){
-
-        if ($this->redis_old instanceof \Redis) {
-            return $this->redis_old;
-        }
-        $redis = \Yaf\Registry::get('redis_old');
-        if($redis instanceof \Redis){
-            $this->redis_old = $redis;
-            return $redis;
-        }
-        if (!extension_loaded('redis')) {
-            throw new \Exception('Redis is need redis Extension!');
-        }
-
-        $conf = $this->getConfig()->get('resources.redis_old');
-
-        if (!$conf) {
-            throw new \Exception('Not redis configure!', 503);
-        }
-        $this->redis_old = $this->loadRedis($conf);
-        \Yaf\Registry::set('redis_old', $this->redis_old);
-        return $this->redis_old;
-    }
 
 
 
