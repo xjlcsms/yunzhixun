@@ -14,7 +14,7 @@
     if (end > -1) {
       content = content.substring(end + 1);
     }
-    title = '[' + val + ']';
+    title = '【' + val + '】';
     content = title + '' + content;
     showLen(content);
   });

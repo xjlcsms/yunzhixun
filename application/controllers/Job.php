@@ -151,12 +151,16 @@ class JobController extends Base\ApplicationController{
         $type = $this->getParam('type',0,'int');
         $smstype = $this->getParam('smstype',0,'int');
         $taskid = $this->getParam('taskid',0,'int');
+        $sign = $this->getParam('sign',0,'string');
         $content = $this->getParam('content','','string');
         $task = \Mapper\SendtasksModel::getInstance()->findById($taskid);
 
         if(!$task instanceof \SendtasksModel){
             return $this->returnData('发送任务不存在',29204);
         }
+//        if(empty($sign)){
+//            return $this->returnData('未设置签名',29207);
+//        }
         $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
         if(!$user instanceof \UsersModel){
             return $this->returnData('发送任务用户不存在',29205);
@@ -175,6 +179,7 @@ class JobController extends Base\ApplicationController{
         if(empty($mobiles)){
             return $this->returnData('没有获取到有效的手机号',29202);
         }
+//        $content = '【'.$sign.'】'.$content;
         //发送的总数
         $totalfee = $smsBusiness->totalFee($mobiles,$content);
         $virefy = $smsBusiness->virefy($user,$content,$type,$totalfee);
