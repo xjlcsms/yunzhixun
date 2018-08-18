@@ -19,13 +19,15 @@
               <div class="form-group">
                 <label class="control-label col-sm-2">号码归属地：</label>
                 <div class="col-md-2 col-sm-2 col-xs-12">
-                  <input name="mobiles" type="text" class="form-control" placeholder="请输入号码归属地">
+                  <input name="mobiles" type="text" class="form-control" value="<?php echo $this->task['area']; ?>" disabled>
+<!--                    <input name="mobiles" type="text" class="form-control" placeholder="请输入号码归属地">-->
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-2">号码数量：</label>
                 <div class="col-md-2 col-sm-2 col-xs-12">
-                  <input name="num" type="text" class="form-control" placeholder="请输入号码数量">
+                  <input name="num" type="text" class="form-control" value="<?php echo $this->task['quantity'];?>" disabled>
+<!--                  <input name="num" type="text" class="form-control" placeholder="请输入号码数量">-->
                 </div>
               </div>
               <div class="form-group">
@@ -43,10 +45,17 @@
                 <label class="control-label col-sm-2">批量导入手机号</label>
                 <div class="col-md-2 col-sm-2 col-xs-12">
                   <form enctype="multipart/form-data" id="fileinfo">
-                    <input type="file" name="file">
+                    <input type="file" name="file" id="smsFile">
                   </form>
                 </div>
-                <a class="btn btn-primary btn-sm">下载批量导入模板</a>
+                <a class="btn btn-primary btn-sm" href="/index/job/downtemp">下载批量导入模板</a>
+              </div>
+              <div class="form-group none" id="result">
+                <label class="control-label col-sm-2"><span id="fileName"></span></label>
+                <div class="col-md-4 control-label" style="text-align: left;">
+                  <label>共计号码数：<span id="totalNum">0</span>个，有效号码数：<span id="useNum">0</span>个(已过滤错误号码：<span id="errNum">0</span>个，已过滤重复号码<span id="reNum">0</span>个)</label>
+                </div>
+                <a class="btn btn-primary btn-sm" id="delSmsFile">删除</a>
               </div>
               <div class="form-group none" id="manual">
                 <label class="control-label col-sm-2">输入待发送手机号</label>
@@ -57,22 +66,25 @@
               <div class="form-group">
                 <label class="control-label col-sm-2">短信类型</label>
                 <div class="col-sm-1">
-                  <select class="form-control" name="type">
-                    <option>请选择</option>
-                    <option>验证码</option>
-                    <option>通知</option>
-                    <option>营销</option>
+                  <select class="form-control" name="type" id="type">
+<!--                    <option value="">请选择</option>-->
+<!--                    <option value="0">验证码</option>-->
+<!--                    <option value="1">通知</option>-->
+<!--                    <option value="2">营销</option>-->
+                      <?php foreach ($this->sendTypes as $key =>$value):?>
+                          <option value="<?php echo $key;?>" <?php echo $key==$this->task['sms_type']?'selected':'';?>><?php echo $value;?></option>
+                      <?php endforeach;?>
                   </select>
                 </div>
                 <label class="control-label col-sm-1">短信签名</label>
                 <div class="col-md-2">
-                  <input name="title" type="text" class="form-control" placeholder="长度为2-8个字符">
+                  <input name="sign" type="text" class="form-control" placeholder="长度为2-8个字符" value="<?php echo $this->task['sign'];?>">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-2">短信内容</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <textarea class="form-control" style="height: 100px" name="content" id="content"></textarea> 
+                  <textarea class="form-control" style="height: 100px" name="content" id="content"><?php echo $this->task['content'];?></textarea>
                 </div>
               </div>
               <div class="form-group">

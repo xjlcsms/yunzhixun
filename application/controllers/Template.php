@@ -41,6 +41,7 @@ class TemplateController extends \Base\ApplicationController
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit', $pagelimit);
         $this->assign('userId', $userId);
         $this->assign('status', $status);
         $this->assign('type', $type);

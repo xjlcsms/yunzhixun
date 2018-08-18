@@ -33,6 +33,7 @@ class UserController extends \Base\ApplicationController
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
+        $this->assign('pagelimit',$pagelimit);
         $this->assign('pager', $pager);
         $this->assign('username',$username);
         $this->assign('name',$company);
@@ -71,6 +72,7 @@ class UserController extends \Base\ApplicationController
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit',$pagelimit);
         $this->assign('userid',$userid);
         $this->assign('acount',$acount);
         $this->assign('direction',$direction);
@@ -162,7 +164,7 @@ class UserController extends \Base\ApplicationController
         $model->setUpdated_at(date('Y-m-d H:i:s'));
         $model->setUser_id($userid);
         $model->setType($user->getType());
-        $model->getDirection(1);
+        $model->setDirection(1);
         $model->setAmount($recharge);
         $model->setShow_amount($recharge);
         $res = \Mapper\RechargerecordsModel::getInstance()->insert($model);
@@ -198,7 +200,7 @@ class UserController extends \Base\ApplicationController
         $model->setUpdated_at(date('Y-m-d H:i:s'));
         $model->setUser_id($userid);
         $model->setType($user->getType());
-        $model->getDirection(2);
+        $model->setDirection(2);
         $model->setAmount($reback);
         $model->setShow_amount($reback);
         $res = \Mapper\RechargerecordsModel::getInstance()->insert($model);

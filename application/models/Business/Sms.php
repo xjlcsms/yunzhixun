@@ -30,13 +30,9 @@ class SmsModel  extends \Business\AbstractModel
         $driver->setAccount($user->getAccount());
         $driver->setPassword($user->getRaw_password());
         $driver->setMsg($sms->getContent());
-        $uid = date('ymdHis').mt_rand(1000, 9999);
-        $driver->setUid($uid);
+        $driver->setUid($sms->getUid());
         $driver->setPhones($sms->getMobiles());
         $result = $driver->send();
-        if($result !==false){
-            \Mapper\SmsqueueModel::getInstance()->update(array('uid'=>$uid),array('id'=>$sms->getId()));
-        }
         return $result;
     }
 
@@ -178,7 +174,7 @@ class SmsModel  extends \Business\AbstractModel
         $uid = $result['uid'];
         $queue = $mapper->findByUid($uid);
         if(!$queue instanceof \SmsqueueModel){
-            return $this->getMsg('没有找到对应的uid队列',10020);
+            return $this->getMsg(10020,'没有找到对应的uid队列');
         }
         $pull = json_decode($queue->getPull());
         if(empty($pull)){

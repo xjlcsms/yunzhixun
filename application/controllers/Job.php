@@ -43,6 +43,7 @@ class JobController extends Base\ApplicationController{
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit', $pagelimit);
         $this->assign('username',$username);
         $this->assign('company',$company);
         $this->assign('sendTypes',$this->_sendTypes);
@@ -102,6 +103,7 @@ class JobController extends Base\ApplicationController{
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
         $this->assign('pager', $pager);
+        $this->assign('pagelimit', $pagelimit);
         $this->assign('time',$time);
         $this->assign('company',$company);
         $this->assign('sign',$sign);
@@ -149,12 +151,16 @@ class JobController extends Base\ApplicationController{
         $type = $this->getParam('type',0,'int');
         $smstype = $this->getParam('smstype',0,'int');
         $taskid = $this->getParam('taskid',0,'int');
+        $sign = $this->getParam('sign',0,'string');
         $content = $this->getParam('content','','string');
         $task = \Mapper\SendtasksModel::getInstance()->findById($taskid);
 
         if(!$task instanceof \SendtasksModel){
             return $this->returnData('发送任务不存在',29204);
         }
+//        if(empty($sign)){
+//            return $this->returnData('未设置签名',29207);
+//        }
         $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
         if(!$user instanceof \UsersModel){
             return $this->returnData('发送任务用户不存在',29205);
@@ -173,21 +179,13 @@ class JobController extends Base\ApplicationController{
         if(empty($mobiles)){
             return $this->returnData('没有获取到有效的手机号',29202);
         }
+//        $content = '【'.$sign.'】'.$content;
         //发送的总数
         $totalfee = $smsBusiness->totalFee($mobiles,$content);
         $virefy = $smsBusiness->virefy($user,$content,$type,$totalfee);
         if(!$virefy){
             $message = $smsBusiness->getMessage();
             return $this->returnData($message['msg'],$message['code']);
-        }
-        $userBusiness = \Business\UserModel::getInstance();
-        $account = $type == 3?'market':'normal';
-        $res = $userBusiness->flow($user,0,$totalfee,$account);
-        if(!$res){
-            $config = \Yaf\Registry::get('config');
-            $key = $config->get('flow.error');
-            $redis = $this->getRedis();
-            $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_show','fee'=>$totalfee)));
         }
         $mobiles = $smsBusiness->divideMobiles($mobiles);
         $smsMapper = \Mapper\SmsqueueModel::getInstance();
@@ -198,11 +196,12 @@ class JobController extends Base\ApplicationController{
         $model->setType($type);
         $model->setCallback('');
         $model->setPull('');
-        $model->setUid('');
         foreach ($mobiles as $mobile){
+           $uid = $taskid.date('ymdHis').mt_rand(1000, 9999);
+           $model->setUid($uid);
            $data = $smsBusiness->trueMobiles($user,$mobile);
            $model->setCreated_at(date('Ymdhis'));
-           $fail = empty($fail)?'':implode(',',$data['fail']);
+           $fail = empty($fail)?'':implode(',',$fail);
            $model->setNot_arrive($fail);
            $true = implode(',',$data['true']);
            $model->setMobiles(empty($true)?'':$true);
@@ -214,6 +213,19 @@ class JobController extends Base\ApplicationController{
             return $this->returnData('发送失败',29200);
            }
         }
+        $userBusiness = \Business\UserModel::getInstance();
+        $account = $type == 3?'market':'normal';
+        $res = $userBusiness->flow($user,0,$totalfee,$account);
+        if(!$res){
+            $config = \Yaf\Registry::get('config');
+            $key = $config->get('flow.error');
+            $redis = $this->getRedis();
+            $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_show','fee'=>$totalfee)));
+            $smsMapper->rollback();
+            $msg = $userBusiness->getMessage();
+            return $this->returnData($msg['msg'],29200);
+        }
+        \Mapper\SendtasksModel::getInstance()->update(array('pull_status'=>1),array('id'=>$taskid));
         $smsMapper->commit();
         return $this->returnData('发送成功',29201,true);
     }
