@@ -65,15 +65,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_mobiles = null;
 
     /**
-     * 云之讯请求结果
-     * 
-     * Column Type: text
-     * 
-     * @var string
-     */
-    protected $_callback = null;
-
-    /**
      * 到达率排除手机号
      * 
      * Column Type: text
@@ -150,15 +141,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      * @var int
      */
     protected $_pull_num = 0;
-
-    /**
-     * 回调回来的数据
-     * 
-     * Column Type: text
-     * 
-     * @var string
-     */
-    protected $_pull = null;
 
     /**
      * 更新时间
@@ -313,31 +295,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
      */
     public function getMobiles() {
         return $this->_mobiles;
-    }
-
-    /**
-     * 云之讯请求结果
-     * 
-     * Column Type: text
-     * 
-     * @param string $callback
-     * @return \SmsqueueModel
-     */
-    public function setCallback($callback) {
-        $this->_callback = (string)$callback;
-        $this->_params['callback'] = (string)$callback;
-        return $this;
-    }
-
-    /**
-     * 云之讯请求结果
-     * 
-     * Column Type: text
-     * 
-     * @return string
-     */
-    public function getCallback() {
-        return $this->_callback;
     }
 
     /**
@@ -553,31 +510,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * 回调回来的数据
-     * 
-     * Column Type: text
-     * 
-     * @param string $pull
-     * @return \SmsqueueModel
-     */
-    public function setPull($pull) {
-        $this->_pull = (string)$pull;
-        $this->_params['pull'] = (string)$pull;
-        return $this;
-    }
-
-    /**
-     * 回调回来的数据
-     * 
-     * Column Type: text
-     * 
-     * @return string
-     */
-    public function getPull() {
-        return $this->_pull;
-    }
-
-    /**
      * 更新时间
      * 
      * Column Type: bigint(20)
@@ -616,7 +548,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'content'    => $this->_content,
             'type'       => $this->_type,
             'mobiles'    => $this->_mobiles,
-            'callback'   => $this->_callback,
             'not_arrive' => $this->_not_arrive,
             'status'     => $this->_status,
             'created_at' => $this->_created_at,
@@ -625,7 +556,6 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'success'    => $this->_success,
             'uid'        => $this->_uid,
             'pull_num'   => $this->_pull_num,
-            'pull'       => $this->_pull,
             'updated_at' => $this->_updated_at
         );
     }

@@ -131,7 +131,7 @@ class SendtasksModel extends \Base\Model\AbstractModel {
     protected $_billing_amount = null;
 
     /**
-     * 任务状态 0 处理中 1 已完成 2 部分失败3失败4驳回
+     * 任务状态 0 处理中 1 已完成 2 部分失败
      * 
      * Column Type: tinyint(3) unsigned
      * Default: 0
@@ -167,16 +167,6 @@ class SendtasksModel extends \Base\Model\AbstractModel {
      * @var int
      */
     protected $_sync_status = 0;
-
-    /**
-     * 拉取是否完成
-     * 
-     * Column Type: tinyint(3)
-     * Default: 0
-     * 
-     * @var int
-     */
-    protected $_pull_status = 0;
 
     /**
      * Params
@@ -505,7 +495,7 @@ class SendtasksModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * 任务状态 0 处理中 1 已完成 2 部分失败3失败4驳回
+     * 任务状态 0 处理中 1 已完成 2 部分失败
      * 
      * Column Type: tinyint(3) unsigned
      * Default: 0
@@ -520,7 +510,7 @@ class SendtasksModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * 任务状态 0 处理中 1 已完成 2 部分失败3失败4驳回
+     * 任务状态 0 处理中 1 已完成 2 部分失败
      * 
      * Column Type: tinyint(3) unsigned
      * Default: 0
@@ -609,33 +599,6 @@ class SendtasksModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * 拉取是否完成
-     * 
-     * Column Type: tinyint(3)
-     * Default: 0
-     * 
-     * @param int $pull_status
-     * @return \SendtasksModel
-     */
-    public function setPull_status($pull_status) {
-        $this->_pull_status = (int)$pull_status;
-        $this->_params['pull_status'] = (int)$pull_status;
-        return $this;
-    }
-
-    /**
-     * 拉取是否完成
-     * 
-     * Column Type: tinyint(3)
-     * Default: 0
-     * 
-     * @return int
-     */
-    public function getPull_status() {
-        return $this->_pull_status;
-    }
-
-    /**
      * Return a array of model properties
      * 
      * @return array
@@ -657,8 +620,7 @@ class SendtasksModel extends \Base\Model\AbstractModel {
             'status'         => $this->_status,
             'created_at'     => $this->_created_at,
             'updated_at'     => $this->_updated_at,
-            'sync_status'    => $this->_sync_status,
-            'pull_status'    => $this->_pull_status
+            'sync_status'    => $this->_sync_status
         );
     }
 

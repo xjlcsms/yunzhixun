@@ -29,7 +29,7 @@ class MigrationsModel extends \Base\Model\AbstractModel {
     /**
      * Migration
      * 
-     * Column Type: varchar(255)
+     * Column Type: varchar(191)
      * 
      * @var string
      */
@@ -88,7 +88,7 @@ class MigrationsModel extends \Base\Model\AbstractModel {
     /**
      * Migration
      * 
-     * Column Type: varchar(255)
+     * Column Type: varchar(191)
      * 
      * @param string $migration
      * @return \MigrationsModel
@@ -102,7 +102,7 @@ class MigrationsModel extends \Base\Model\AbstractModel {
     /**
      * Migration
      * 
-     * Column Type: varchar(255)
+     * Column Type: varchar(191)
      * 
      * @return string
      */
