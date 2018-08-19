@@ -48,7 +48,7 @@ class SmsqueueModel extends \Mapper\AbstractModel
 
 
     public function pullover(){
-        $where = array('success !=0','success=pull_num','status'=>2);
+        $where = array('success !=0','success=pull_num','status in(2,3)');
         $order = array('updated_at asc');
         $madel = $this->fetch($where,$order);
         if(!$madel instanceof \SmsqueueModel){

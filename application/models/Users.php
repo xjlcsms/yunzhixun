@@ -74,6 +74,24 @@ class UsersModel extends \Base\Model\AbstractModel {
     protected $_arrival_rate = 100;
 
     /**
+     * 云之讯对应账号
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @var string
+     */
+    protected $_account = null;
+
+    /**
+     * 云之讯对应密码
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @var string
+     */
+    protected $_raw_password = null;
+
+    /**
      * 真实余额
      * 
      * Column Type: int(10) unsigned
@@ -141,22 +159,24 @@ class UsersModel extends \Base\Model\AbstractModel {
     protected $_updated_at = null;
 
     /**
-     * access_key
+     * 账号所属平台 1 云之讯 2 纯真
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(3) unsigned
+     * Default: 1
      * 
-     * @var string
+     * @var int
      */
-    protected $_access_key = null;
+    protected $_platform_type = 1;
 
     /**
-     * access_secret
+     * 是否删除
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(1)
+     * Default: 0
      * 
-     * @var string
+     * @var int
      */
-    protected $_secret = null;
+    protected $_isdel = 0;
 
     /**
      * Params
@@ -326,6 +346,56 @@ class UsersModel extends \Base\Model\AbstractModel {
      */
     public function getArrival_rate() {
         return $this->_arrival_rate;
+    }
+
+    /**
+     * 云之讯对应账号
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @param string $account
+     * @return \UsersModel
+     */
+    public function setAccount($account) {
+        $this->_account = (string)$account;
+        $this->_params['account'] = (string)$account;
+        return $this;
+    }
+
+    /**
+     * 云之讯对应账号
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @return string
+     */
+    public function getAccount() {
+        return $this->_account;
+    }
+
+    /**
+     * 云之讯对应密码
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @param string $raw_password
+     * @return \UsersModel
+     */
+    public function setRaw_password($raw_password) {
+        $this->_raw_password = (string)$raw_password;
+        $this->_params['raw_password'] = (string)$raw_password;
+        return $this;
+    }
+
+    /**
+     * 云之讯对应密码
+     * 
+     * Column Type: varchar(191)
+     * 
+     * @return string
+     */
+    public function getRaw_password() {
+        return $this->_raw_password;
     }
 
     /**
@@ -512,53 +582,57 @@ class UsersModel extends \Base\Model\AbstractModel {
     }
 
     /**
-     * access_key
+     * 账号所属平台 1 云之讯 2 纯真
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(3) unsigned
+     * Default: 1
      * 
-     * @param string $access_key
+     * @param int $platform_type
      * @return \UsersModel
      */
-    public function setAccess_key($access_key) {
-        $this->_access_key = (string)$access_key;
-        $this->_params['access_key'] = (string)$access_key;
+    public function setPlatform_type($platform_type) {
+        $this->_platform_type = (int)$platform_type;
+        $this->_params['platform_type'] = (int)$platform_type;
         return $this;
     }
 
     /**
-     * access_key
+     * 账号所属平台 1 云之讯 2 纯真
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(3) unsigned
+     * Default: 1
      * 
-     * @return string
+     * @return int
      */
-    public function getAccess_key() {
-        return $this->_access_key;
+    public function getPlatform_type() {
+        return $this->_platform_type;
     }
 
     /**
-     * access_secret
+     * 是否删除
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(1)
+     * Default: 0
      * 
-     * @param string $secret
+     * @param int $isdel
      * @return \UsersModel
      */
-    public function setSecret($secret) {
-        $this->_secret = (string)$secret;
-        $this->_params['secret'] = (string)$secret;
+    public function setIsdel($isdel) {
+        $this->_isdel = (int)$isdel;
+        $this->_params['isdel'] = (int)$isdel;
         return $this;
     }
 
     /**
-     * access_secret
+     * 是否删除
      * 
-     * Column Type: varchar(80)
+     * Column Type: tinyint(1)
+     * Default: 0
      * 
-     * @return string
+     * @return int
      */
-    public function getSecret() {
-        return $this->_secret;
+    public function getIsdel() {
+        return $this->_isdel;
     }
 
     /**
@@ -574,6 +648,8 @@ class UsersModel extends \Base\Model\AbstractModel {
             'name'                   => $this->_name,
             'type'                   => $this->_type,
             'arrival_rate'           => $this->_arrival_rate,
+            'account'                => $this->_account,
+            'raw_password'           => $this->_raw_password,
             'normal_balance'         => $this->_normal_balance,
             'marketing_balance'      => $this->_marketing_balance,
             'show_normal_balance'    => $this->_show_normal_balance,
@@ -581,8 +657,8 @@ class UsersModel extends \Base\Model\AbstractModel {
             'remember_token'         => $this->_remember_token,
             'created_at'             => $this->_created_at,
             'updated_at'             => $this->_updated_at,
-            'access_key'             => $this->_access_key,
-            'secret'                 => $this->_secret
+            'platform_type'          => $this->_platform_type,
+            'isdel'                  => $this->_isdel
         );
     }
 

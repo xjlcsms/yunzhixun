@@ -194,8 +194,7 @@ class JobController extends Base\ApplicationController{
         $model->setTask_id($taskid);
         $model->setContent($content);
         $model->setType($type);
-        $model->setCallback('');
-        $model->setPull('');
+        $model->setError('');
         foreach ($mobiles as $mobile){
            $uid = $taskid.date('ymdHis').mt_rand(1000, 9999);
            $model->setUid($uid);
@@ -225,7 +224,7 @@ class JobController extends Base\ApplicationController{
             $msg = $userBusiness->getMessage();
             return $this->returnData($msg['msg'],29200);
         }
-        \Mapper\SendtasksModel::getInstance()->update(array('pull_status'=>1),array('id'=>$taskid));
+        \Mapper\SendtasksModel::getInstance()->update(array('status'=>1),array('id'=>$taskid));
         $smsMapper->commit();
         return $this->returnData('发送成功',29201,true);
     }

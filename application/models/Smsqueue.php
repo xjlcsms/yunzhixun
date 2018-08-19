@@ -153,6 +153,15 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     protected $_updated_at = 0;
 
     /**
+     * 发送错误
+     * 
+     * Column Type: text
+     * 
+     * @var string
+     */
+    protected $_error = null;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -537,6 +546,31 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 发送错误
+     * 
+     * Column Type: text
+     * 
+     * @param string $error
+     * @return \SmsqueueModel
+     */
+    public function setError($error) {
+        $this->_error = (string)$error;
+        $this->_params['error'] = (string)$error;
+        return $this;
+    }
+
+    /**
+     * 发送错误
+     * 
+     * Column Type: text
+     * 
+     * @return string
+     */
+    public function getError() {
+        return $this->_error;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -556,7 +590,8 @@ class SmsqueueModel extends \Base\Model\AbstractModel {
             'success'    => $this->_success,
             'uid'        => $this->_uid,
             'pull_num'   => $this->_pull_num,
-            'updated_at' => $this->_updated_at
+            'updated_at' => $this->_updated_at,
+            'error'      => $this->_error
         );
     }
 

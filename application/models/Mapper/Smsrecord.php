@@ -7,14 +7,15 @@
  */
 namespace Mapper;
 
-class SmsqueuecopyModel extends \Mapper\AbstractModel
+class SmsrecordModel extends \Mapper\AbstractModel
 {
 
     use \Base\Model\InstanceModel;
 
-    protected $modelClass = '\SmsqueuecopyModel';
+    protected $modelClass = '\SmsrecordModel';
 
-    protected $table = 'sms_queue_copy';
+    protected $table = 'sms_record';
+
 
 
 }

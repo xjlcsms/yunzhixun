@@ -52,8 +52,8 @@ class Sms extends \Cron\CronAbstract {
             $result = $business->sms($user,$model);
             if($result === false or !isset($result['total_fee']) ){
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
+                $model->setError(json_encode($result));
                 $model->setStatus(4);
-                $model->setCallback(json_encode($result));
                 $model->setUpdated_at(date('YmdHis'));
                 $mapper->update($model);
                 continue;
@@ -61,10 +61,39 @@ class Sms extends \Cron\CronAbstract {
             if($result['total_fee'] == 0){
                 $this->log('Id:'.$model->getId().':fail,短信发送失败');
                 $model->setStatus(4);
+                $model->setError(json_encode($result));
                 $model->setUpdated_at(date('YmdHis'));
-                $model->setCallback(json_encode($result));
                 $mapper->update($model);
                 continue;
+            }
+            $recordMapper = \Mapper\SmsrecordModel::getInstance();
+            $order = new \SmsrecordModel();
+            $order->setTask_id($model->getTask_id());
+            $order->setUser_id($task->getUser_id());
+            $order->setSms_type($model->getType());
+            foreach ($result['data'] as $datum){
+                $order->setUid($datum['uid']);
+                $order->setSid($datum['sid']);
+                $order->setPhone($datum['mobile']);
+                if($task->getType() == 2){
+                    $order->setMasked_phone(substr_replace($datum['mobile'],'******',2,-3));
+                }else{
+                    $order->setMasked_phone($datum['mobile']);
+                }
+                $order->setBilling_count($datum['fee']);
+                $order->setCode($datum['code']);
+                if($datum['code']!=0){
+                    $order->setMessage($datum['msg']);
+                    $order->setStatus(2);
+                }else{
+                    $order->setStatus(1);
+                }
+                $order->setCreated_at(date('YmdHis'));
+                $res = $recordMapper->insert($order);
+                if($res === false){
+                    $this->log($datum['sid'].'添加订单失败');
+                    $model->setError(json_encode($result));
+                }
             }
             $account = $model->getType()==3?'market':'normal';
             $res = $userBusiness->flow($user,$result['total_fee'],0,$account);
@@ -83,7 +112,6 @@ class Sms extends \Cron\CronAbstract {
                 $model->setStatus(2);
             }
             $model->setSuccess($sendNum);
-            $model->setCallback(json_encode($result));
             $model->setUpdated_at(date('YmdHis'));
             $mapper->update($model);
             $this->success($model->getId());
@@ -92,7 +120,7 @@ class Sms extends \Cron\CronAbstract {
     }
 
 
-    public function allPull(){
+    public function pullAll(){
         $mapper = \Mapper\SmsqueueModel::getInstance();
         $begin = time();
         while (time() - $begin <60){
@@ -101,14 +129,18 @@ class Sms extends \Cron\CronAbstract {
                 sleep(1);
                 continue;
             }
-            if((time() - strtotime($model->getUpdated_at())) <3){
-                sleep(2);
+            if((time() - strtotime($model->getUpdated_at())) <5){
+                sleep(5);
             }
-            $this->log('Id:'.$model->getId().':start');
             $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
             $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
             if(!$user instanceof \UsersModel){
                 $this->fail($model->getId().':发送用户不存在');
+                continue;
+            }
+            $this->start($user->getId());
+            if($this->locked($user->getId(),__CLASS__,'pull',60) === false){
+                sleep(2);
                 continue;
             }
             $smser = new \Ku\Sms\Adapter('yunzhixun');
@@ -117,7 +149,7 @@ class Sms extends \Cron\CronAbstract {
             $driver->setPassword($user->getRaw_password());
             $result = $driver->pull();
             if($result === false){
-                $this->fail($model->getId().':'.$driver->getError());
+                $this->fail($user->getId().':'.$driver->getError());
                 continue;
             }
             if($result['code'] !==0){
@@ -133,125 +165,142 @@ class Sms extends \Cron\CronAbstract {
                 $res = $business->pullAll($data);
                 if(!$res){
                     $message = $business->getMessage();
-                    $this->fail($model->getId().':'.json_encode($data).'：'.$message['msg']);
+                    $this->fail($user->getId().':'.json_encode($data).'：'.$message['msg']);
                 }
             }
-            $this->success($model->getId());
+            $this->success($user->getId());
         }
         return false;
     }
 
-    /**
-     *已获取回调的数据导入至文件保存
-     */
-    public function exportSms(){
-        $key = 'import_sms_pull_over_%s';
-        $mapper = \Mapper\SmsqueueModel::getInstance();
-        $copyMapper = \Mapper\SmsqueuecopyModel::getInstance();
+
+    public function pullOrder(){
+        $mapper = \Mapper\SmsrecordModel::getInstance();
+        $where = array('isapi'=>1,'report_status'=>0);
         $begin = time();
-        while (time() - $begin <60) {
-            $model = $mapper->pullover();
-            if (!$model instanceof \SmsqueueModel) {
+        while (time() - $begin <60){
+            $order = $mapper->fetch($where,array('id desc'));
+            if(!$order instanceof \SmsrecordModel){
                 sleep(1);
                 continue;
             }
-            //加锁防止冲突
-            $res = $this->locked(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__,1200);
-            if($res === false){
-                sleep(1);
+            if($this->locked($order->getUser_id(),__CLASS__,'pull',60) === false){
+                sleep(5);
                 continue;
             }
-            $this->log('Id:'.$model->getId().':start');
-            $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
-            $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
-            if(!$user instanceof \UsersModel){
-                $this->fail($model->getId().':发送用户不存在');
+            $user = \Mapper\UsersModel::getInstance()->findById($order->getUser_id());
+            $this->start($order->getUser_id());
+            $smser = new \Ku\Sms\Adapter('yunzhixun');
+            $driver = $smser->getDriver();
+            $driver->setAccount($user->getAccount());
+            $driver->setPassword($user->getRaw_password());
+            $result = $driver->pull();
+            if($result === false){
+                $this->fail($order->getUser_id().':'.$driver->getError());
                 continue;
             }
-            $res = \Ku\Tool::makeDir($this->_fileFirst);
-            if(!$res){
-                $this->log('创建目录失败:'.$this->_fileFirst);
-                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+            if($result['code'] !==0){
+                sleep(5);
                 continue;
             }
-            $str = '';
-            $pulls = json_decode($model->getPull(),true);
-            foreach ($pulls as $pull){
-                $statusStr = $pull['report_status']=='SUCCESS'?'成功':'';
-                $str .= $pull['mobile'].','.$model->getContent().','.$statusStr.','.$pull['user_receive_time']."\n";
-            }
-//            if(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows nt')){
-//                $str = mb_convert_encoding($str,'gbk','utf-8');
-//            }
-           $fileName = 'task_'.$task->getId().'.csv';
-           if(!file_exists($this->_fileFirst.$fileName)){
-                $header = '发送手机号,发送内容,发送状态,到达时间'."\n";
-                $str = $header.$str;
-            }
-            $fp = fopen($this->_fileFirst.$fileName,'a');
-            $str = mb_convert_encoding($str,'gbk','utf-8');
-            $res = fwrite($fp,$str);
-            fclose($fp);
-            if($res <= 0){
-                $this->log('队列Id:'.$model->getId().'写入文件失败');
-                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+            if(empty($result['data'])){
                 continue;
             }
-            $mapper->begin();
-            $addres = $copyMapper->insert($model);
-            if(!$addres){
-                $mapper->rollback();
-                $this->log('队列Id:'.$model->getId().'数据备份失败');
-                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
-                continue;
+            $business = \Business\SmsModel::getInstance();
+            foreach ($result['data'] as $data){
+                $res = $business->pullAll($data);
+                if(!$res){
+                    $message = $business->getMessage();
+                    $this->fail($order->getUser_id().':'.json_encode($data).'：'.$message['msg']);
+                }
             }
-            if($model->getTotal_num() != $model->getSuccess()){
-                \Mapper\SendtasksModel::getInstance()->update(array('status'=>3,'updated_at'=>date('Y-m-d H:i:s')),array('id'=>$model->getTask_id()));
-            }
-            $delres = $mapper->del(array('id'=>$model->getId()));
-            if(!$delres){
-                $mapper->rollback();
-                $this->log('队列Id:'.$model->getId().'数据删除失败');
-                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
-                continue;
-            }
-            $mapper->commit();
-            $this->log('队列Id:'.$model->getId().'数据导入至文件成功');
-            $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
-        }
-    }
-
-
-    /**更新已拉取完回调数据的发送任务
-     * @return bool
-     */
-    public function pullStatus(){
-        $mapper = \Mapper\SendtasksModel::getInstance();
-        $queueMapper = \Mapper\SmsqueueModel::getInstance();
-        $where = array('pull_status'=>1,"created_at >='2018-07-16 00:00:00'",'quantity >0');
-        $sendTasks = $mapper->fetchAll($where,array('created_at desc'));
-        if(empty($sendTasks)){
-            $this->log('没有需要更新拉取状态的发送任务');
-            return false;
-        }
-        foreach ($sendTasks as $task){
-            $queue = $queueMapper->fetch(array('task_id'=>$task->getId(),'status'=>2));
-            if($queue instanceof \SmsqueuecopyModel){
-                continue;
-            }
-            $task->setPull_status(2);
-            if($task->getStatus() != 3){
-                $task->setStatus(1);
-            }
-            $task->setUpdated_at(date('Y-m-d H:i:s'));
-            $res = $mapper->update($task);
-            if(!$res){
-                $this->fail($task->getId().'：更新状态失败');
-                continue;
-            }
-            $this->log($task->getId().'：更新状态成功');
+            $this->success($order->getUser_id());
         }
         return false;
     }
+
+
+
+
+//    /**
+//     *已获取回调的数据导入至文件保存
+//     */
+//    public function exportSms(){
+//        $key = 'import_sms_pull_over_%s';
+//        $mapper = \Mapper\SmsqueueModel::getInstance();
+//        $copyMapper = \Mapper\SmsqueuecopyModel::getInstance();
+//        $begin = time();
+//        while (time() - $begin <60) {
+//            $model = $mapper->pullover();
+//            if (!$model instanceof \SmsqueueModel) {
+//                sleep(1);
+//                continue;
+//            }
+//            //加锁防止冲突
+//            $res = $this->locked(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__,1200);
+//            if($res === false){
+//                sleep(1);
+//                continue;
+//            }
+//            $this->log('Id:'.$model->getId().':start');
+//            $task = \Mapper\SendtasksModel::getInstance()->findById($model->getTask_id());
+//            $user = \Mapper\UsersModel::getInstance()->findById($task->getUser_id());
+//            if(!$user instanceof \UsersModel){
+//                $this->fail($model->getId().':发送用户不存在');
+//                continue;
+//            }
+//            $res = \Ku\Tool::makeDir($this->_fileFirst);
+//            if(!$res){
+//                $this->log('创建目录失败:'.$this->_fileFirst);
+//                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+//                continue;
+//            }
+//            $str = '';
+//            $pulls = json_decode($model->getPull(),true);
+//            foreach ($pulls as $pull){
+//                $statusStr = $pull['report_status']=='SUCCESS'?'成功':'';
+//                $str .= $pull['mobile'].','.$model->getContent().','.$statusStr.','.$pull['user_receive_time']."\n";
+//            }
+////            if(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows nt')){
+////                $str = mb_convert_encoding($str,'gbk','utf-8');
+////            }
+//           $fileName = 'task_'.$task->getId().'.csv';
+//           if(!file_exists($this->_fileFirst.$fileName)){
+//                $header = '发送手机号,发送内容,发送状态,到达时间'."\n";
+//                $str = $header.$str;
+//            }
+//            $fp = fopen($this->_fileFirst.$fileName,'a');
+//            $str = mb_convert_encoding($str,'gbk','utf-8');
+//            $res = fwrite($fp,$str);
+//            fclose($fp);
+//            if($res <= 0){
+//                $this->log('队列Id:'.$model->getId().'写入文件失败');
+//                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+//                continue;
+//            }
+//            $mapper->begin();
+//            $addres = $copyMapper->insert($model);
+//            if(!$addres){
+//                $mapper->rollback();
+//                $this->log('队列Id:'.$model->getId().'数据备份失败');
+//                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+//                continue;
+//            }
+//            if($model->getTotal_num() != $model->getSuccess()){
+//                \Mapper\SendtasksModel::getInstance()->update(array('status'=>3,'updated_at'=>date('Y-m-d H:i:s')),array('id'=>$model->getTask_id()));
+//            }
+//            $delres = $mapper->del(array('id'=>$model->getId()));
+//            if(!$delres){
+//                $mapper->rollback();
+//                $this->log('队列Id:'.$model->getId().'数据删除失败');
+//                $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+//                continue;
+//            }
+//            $mapper->commit();
+//            $this->log('队列Id:'.$model->getId().'数据导入至文件成功');
+//            $this->unlock(sprintf($key,$model->getId()),__CLASS__,__FUNCTION__);
+//        }
+//    }
+
 
 }
