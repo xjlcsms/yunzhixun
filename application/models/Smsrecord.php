@@ -75,6 +75,15 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
     protected $_sms_type = 0;
 
     /**
+     * 发送内容
+     * 
+     * Column Type: varchar(600)
+     * 
+     * @var string
+     */
+    protected $_content = '';
+
+    /**
      * 计费条数
      * 
      * Column Type: tinyint(3) unsigned
@@ -380,6 +389,31 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
      */
     public function getSms_type() {
         return $this->_sms_type;
+    }
+
+    /**
+     * 发送内容
+     * 
+     * Column Type: varchar(600)
+     * 
+     * @param string $content
+     * @return \SmsrecordModel
+     */
+    public function setContent($content) {
+        $this->_content = (string)$content;
+        $this->_params['content'] = (string)$content;
+        return $this;
+    }
+
+    /**
+     * 发送内容
+     * 
+     * Column Type: varchar(600)
+     * 
+     * @return string
+     */
+    public function getContent() {
+        return $this->_content;
     }
 
     /**
@@ -765,6 +799,7 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
             'task_id'       => $this->_task_id,
             'user_id'       => $this->_user_id,
             'sms_type'      => $this->_sms_type,
+            'content'       => $this->_content,
             'billing_count' => $this->_billing_count,
             'status'        => $this->_status,
             'code'          => $this->_code,

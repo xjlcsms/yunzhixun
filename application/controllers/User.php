@@ -280,4 +280,39 @@ class UserController extends \Base\ApplicationController
         return $this->returnData('删除成功',21021);
     }
 
+
+    /**设置回调地址
+     * @return false
+     */
+    public function seturlAction(){
+        $userId = $this->getParam('user_id',0,'int');
+        $request = $this->getRequest();
+        $url = $request->get('url','');
+        if(empty($url)){
+            $this->returnData('回调地址不能为空',1000);
+        }
+        $user = \Mapper\UsersModel::getInstance()->findById($userId);
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('用户不存在',1000);
+        }
+        $mapper = \Mapper\UsercallbackModel::getInstance();
+        $callBack = $mapper->findByUser_id($userId);
+        if(!$callBack instanceof \UsercallbackModel){
+            $model = new \UsercallbackModel();
+            $model->setUser_id($userId);
+            $model->setUrl($url);
+            $model->setCreated_at(date('YmdHis'));
+            $model->setUpdated_at(date('YmdHis'));
+            $res = $mapper->insert($model);
+        }else{
+            $callBack->setUrl($url);
+            $callBack->setUpdated_at(date('YmdHis'));
+            $res = $mapper->update($callBack);
+        }
+        if($res ===false){
+            return $this->returnData('设置毁掉地址失败',1000);
+        }
+        return $this->returnData('设置成功',10001,true);
+    }
+
 }

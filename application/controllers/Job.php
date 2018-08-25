@@ -168,7 +168,7 @@ class JobController extends Base\ApplicationController{
         $smsBusiness = \Business\SmsModel::getInstance();
         if($smstype == 1){
             $smsfile = $this->getParam('smsfile','','string');
-            if(!file_exists(APPLICATION_PATH.'/public/uploads/sms/'.$smsfile || empty($smsfile))){
+            if(!file_exists(APPLICATION_PATH.'/public/uploads/sms/'.$smsfile) || empty($smsfile)){
                 return $this->returnData('发送文件不存在',29200);
             }
             $mobiles = $smsBusiness->importMobiles($smsfile);

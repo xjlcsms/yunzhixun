@@ -71,6 +71,7 @@ class Sms extends \Cron\CronAbstract {
             $order->setTask_id($model->getTask_id());
             $order->setUser_id($task->getUser_id());
             $order->setSms_type($model->getType());
+            $order->setContent($model->getContent());
             foreach ($result['data'] as $datum){
                 $order->setUid($datum['uid']);
                 $order->setSid($datum['sid']);
@@ -138,11 +139,11 @@ class Sms extends \Cron\CronAbstract {
                 $this->fail($model->getId().':发送用户不存在');
                 continue;
             }
-            $this->start($user->getId());
             if($this->locked($user->getId(),__CLASS__,'pull',60) === false){
-                sleep(2);
+                sleep(5);
                 continue;
             }
+            $this->start($user->getId());
             $smser = new \Ku\Sms\Adapter('yunzhixun');
             $driver = $smser->getDriver();
             $driver->setAccount($user->getAccount());
@@ -215,6 +216,68 @@ class Sms extends \Cron\CronAbstract {
                 }
             }
             $this->success($order->getUser_id());
+        }
+        return false;
+    }
+
+
+    /**回调处理
+     * @return bool
+     */
+    public function callback(){
+        $mapper = \Mapper\SmsrecordModel::getInstance();
+        $where = array('isapi'=>1,'report_status in(1,2)','iscallback'=>0);
+        $begin = time();
+        $http = new \Ku\Http();
+        while (time() - $begin <60){
+            $order = $mapper->fetch($where,array('id desc'));
+            if(!$order instanceof \SmsrecordModel){
+                sleep(1);
+                continue;
+            }
+            $order->setIscallback(1);
+            $mapper->update($order);
+            if($this->locked($order->getId(),__CLASS__,'pull',60) === false){
+                sleep(5);
+                continue;
+            }
+            $userCallback = \Mapper\UsercallbackModel::getInstance()->findByUser_id($order->getUser_id());
+            if(!$userCallback instanceof \UsercallbackModel){
+                $order->setUpdated_at(date('YmdHis'));
+                $order->setIscallback(4);
+                $mapper->update($order);
+            }
+            if(empty($userCallback->getUrl())){
+                $order->setUpdated_at(date('YmdHis'));
+                $order->setIscallback(4);
+                $mapper->update($order);
+            }
+            $this->start($order->getId());
+            $report_status = $order->getReport_status()==1?'Success':'Fail';
+            $params = array(
+                'report_status'=>$report_status,'sid'=>$order->getSid(),'mobile'=>$order->getMasked_phone(),'arrive_time'=>date('Y-m-d H:i:s',strtotime($order->getArrivaled_at()))
+            );
+            $http->setUrl($userCallback->getUrl());
+            $http->setParam($params,true,true);
+            $http->setTimeout(2);
+            $send = $http->send();
+            $send = json_decode($send,true);
+            if($send and isset($send['receive_status'])){
+                if($send['receive_status']){
+                    $order->setUpdated_at(date('YmdHis'));
+                    $order->setIscallback(2);
+                    $mapper->update($order);
+                }else{
+                    $order->setUpdated_at(date('YmdHis'));
+                    $order->setIscallback(3);
+                    $mapper->update($order);
+                }
+            }else{
+                $order->setUpdated_at(date('YmdHis'));
+                $order->setIscallback(4);
+                $mapper->update($order);
+            }
+            $this->success($order->getId());
         }
         return false;
     }
