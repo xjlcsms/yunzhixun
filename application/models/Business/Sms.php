@@ -226,8 +226,8 @@ class SmsModel  extends \Business\AbstractModel
         $order->setDesc($result['desc']);
         $order->setArrivaled_at(date('YmdHis',strtotime($result['user_receive_time'])));
         $order->setUpdated_at(date('YmsHis'));
-        $order->setReport_status($result['report_status']);
-        $order->setStatus($result['report_status']=='SUCCESS'?2:1);
+        $order->setReport_status($result['report_status']=='SUCCESS'?1:2);
+//        $order->setStatus($result['report_status']=='SUCCESS'?2:1);
         $res = $mapper->update($order);
         if(!$res){
             $mapper->rollback();

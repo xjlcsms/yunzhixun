@@ -201,6 +201,16 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
     protected $_isapi = 0;
 
     /**
+     * 回调处理
+     * 
+     * Column Type: tinyint(1) unsigned
+     * Default: 0
+     * 
+     * @var int
+     */
+    protected $_iscallback = 0;
+
+    /**
      * Params
      * 
      * Column Type: array
@@ -716,6 +726,33 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
     }
 
     /**
+     * 回调处理
+     * 
+     * Column Type: tinyint(1) unsigned
+     * Default: 0
+     * 
+     * @param int $iscallback
+     * @return \SmsrecordModel
+     */
+    public function setIscallback($iscallback) {
+        $this->_iscallback = (int)$iscallback;
+        $this->_params['iscallback'] = (int)$iscallback;
+        return $this;
+    }
+
+    /**
+     * 回调处理
+     * 
+     * Column Type: tinyint(1) unsigned
+     * Default: 0
+     * 
+     * @return int
+     */
+    public function getIscallback() {
+        return $this->_iscallback;
+    }
+
+    /**
      * Return a array of model properties
      * 
      * @return array
@@ -740,7 +777,8 @@ class SmsrecordModel extends \Base\Model\AbstractModel {
             'arrivaled_at'  => $this->_arrivaled_at,
             'created_at'    => $this->_created_at,
             'updated_at'    => $this->_updated_at,
-            'isapi'         => $this->_isapi
+            'isapi'         => $this->_isapi,
+            'iscallback'    => $this->_iscallback
         );
     }
 
