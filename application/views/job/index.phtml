@@ -13,20 +13,19 @@
             <div class="dataTables_wrapper dt-bootstrap no-footer">
               <div class="row">
                 <div class="col-sm-9">
-                  <div class="col-sm-2" style="padding-left: 0">
-                    <label>
-                      <input type="text" class="form-control input-sm" placeholder="请输入用户ID" value="<?php echo $this->username;?>">
-                    </label>
-                  </div>
-                  <div class="col-sm-2" style="padding-left: 0">
-                    <label>
-                      <input type="text" class="form-control input-sm" placeholder="请输入公司名称" <?php echo $this->company;?>>
-                    </label>
-                  </div>
-                  <a class="btn btn-primary btn-sm">
-                    搜索
-                  </a>
-                  
+                  <form class="search-form">
+                    <div class="col-sm-2" style="padding-left: 0">
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="请输入用户ID" value="<?php echo $this->username;?>" name="username">
+                      </label>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 0">
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="请输入公司名称" value="<?php echo $this->company;?>" name="company">
+                      </label>
+                    </div>
+                    <button class="btn btn-primary btn-sm">搜索</button>
+                  </form>
                 </div>
                 <div class="col-sm-3">
                   <div class="dataTables_filter">

@@ -22,19 +22,19 @@
             <div class="dataTables_wrapper dt-bootstrap no-footer">
               <div class="row">
                 <div class="col-sm-9">
-                  <div class="col-sm-2" style="padding-left: 0px">
+                  <form class="search-form">
+                    <div class="col-sm-2" style="padding-left: 0px">
+                      <label>
+                        <input type="text" class="form-control input-sm" placeholder="请输入用户ID" value="<?php echo $this->username;?>" name="username">
+                      </label>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 0px">
                     <label>
-                      <input type="text" class="form-control input-sm" placeholder="请输入用户ID" value="<?php echo $this->username;?>">
+                      <input type="text" class="form-control input-sm" placeholder="请输入公司名称"  value="<?php echo $this->name;?>" name="name">
                     </label>
                   </div>
-                  <div class="col-sm-2" style="padding-left: 0px">
-                    <label>
-                      <input type="text" class="form-control input-sm" placeholder="请输入公司名称"  value="<?php echo $this->name;?>">
-                    </label>
-                  </div>
-                  <a class="btn btn-primary btn-sm">
-                    搜索
-                  </a>
+                  <button class="btn btn-primary btn-sm">搜索</button>
+                  </form>
                   <a class="btn btn-default btn-sm" id="open">开户</a>
                 </div>
                 <div class="col-sm-3">
@@ -226,6 +226,24 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="openBtn">开户</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-sm" id="urlModal">
+          <div class="modal-dialog modal-sm" style="margin: 0;position: absolute;top: 40%;left: 50%;transform: translate(-40%,-50%);">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">设置回退地址</h4>
+              </div>
+              <div class="modal-body">
+                <input type="text" name="collbackUrl" class="form-control input-sm" placeholder="请输入回退地址">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="setUrl">确定</button>
               </div>
             </div>
           </div>

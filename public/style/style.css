@@ -1,3 +1,9 @@
 .right_col {
   overflow: auto;
 }
+.search-form {
+  overflow: hidden;
+}
+.search-form .btn {
+  margin-bottom: 3px;
+}
