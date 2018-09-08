@@ -10,7 +10,7 @@
       $(this).val(val);
     }
 
-    end = content.indexOf(']');
+    end = content.indexOf('】');
     if (end > -1) {
       content = content.substring(end + 1);
     }
@@ -101,9 +101,11 @@
       smsfile: $('#fileName').text(),
       mobiles: $('#phoneText').val()
     }
-    console.log(params)
     $.post('/index/job/sms', params, function(res) {
-      console.log(res)
+      if (res.status === true) {
+        alert(res.msg)
+        window.location.href = '/index/job/deal?taskid=' + taskid
+      }
     })
   })
 })()

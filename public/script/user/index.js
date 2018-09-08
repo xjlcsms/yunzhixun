@@ -94,6 +94,24 @@
       }
     })
   })
+
+  // 设置回退地址
+  $('.setCallbackUrl').click(function() {
+    $('input[name="collbackUrl"]').val('')
+    userid = $(this).attr('data-id');
+    $('#urlModal').modal('show');
+  })
+  $('#setUrl').click(function() {
+    var params = {
+      user_id: userid,
+      url: $('input[name="collbackUrl"]').val()
+    }
+    $.post('/user/seturl', params, function(res) {
+      if (res.status === true) {
+        window.location.href = '/index/user/index'
+      }
+    })
+  })
 })()
 
 function delModalInit() {

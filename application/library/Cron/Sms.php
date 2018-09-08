@@ -258,7 +258,7 @@ class Sms extends \Cron\CronAbstract {
                 'report_status'=>$report_status,'sid'=>$order->getSid(),'mobile'=>$order->getMasked_phone(),'arrive_time'=>date('Y-m-d H:i:s',strtotime($order->getArrivaled_at()))
             );
             $http->setUrl($userCallback->getUrl());
-            $http->setParam($params,true,true);
+            $http->setParam($params,true);
             $http->setTimeout(2);
             $send = $http->send();
             $send = json_decode($send,true);
