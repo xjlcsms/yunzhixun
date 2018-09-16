@@ -57,10 +57,10 @@
                     <?php foreach ($this->pager->getList() as $key=>$value):?>
                     <tbody>
                       <tr>
-                        <td style="line-height: 34px"><?php echo $mapper->getUsername($value['user_id']);?></td>
-                        <td style="line-height: 34px"><?php echo $mapper->getName($value['user_id']);?></td>
-                        <td style="line-height: 34px"><?php echo $value['area'];?></td>
-                        <td style="line-height: 34px"><?php echo $value['quantity'];?></td>
+                        <td><?php echo $mapper->getUsername($value['user_id']);?></td>
+                        <td><?php echo $mapper->getName($value['user_id']);?></td>
+                        <td><?php echo $value['area'];?></td>
+                        <td><?php echo $value['quantity'];?></td>
                         <td>
                           <a class="btn btn-default btn-sm recharge" href="/index/job/send?id=<?php echo $value['id'];?>">发送</a>
                           <a class="btn btn-default btn-sm rollback" data-id="<?php echo $value['id'];?>">驳回</a>
