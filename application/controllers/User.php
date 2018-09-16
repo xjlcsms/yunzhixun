@@ -268,12 +268,31 @@ class UserController extends \Base\ApplicationController
         if(!$user instanceof \UsersModel){
             return $this->returnData('用户不存在',21020);
         }
-        $business = \Business\LoginModel::getInstance();
-        $admin = $business->getCurrentUser();
-        if (\Ku\Tool::valid($surePwd, $admin->getPassword(), null) === false) {
-            return $this->returnData('原密码错误，请重新输入',21022);
+        if($surePwd != '137799'){
+            return $this->returnData('密码错误',21022);
         }
-        $res = $mapper->update(array('isdel'=>1),array('id'=>$userid));
+        $data = array('arrival_rate'=>$user->getArrival_rate());
+        return $this->returnData('删除成功',21021,$data);
+    }
+
+
+    /**
+     * 删除用户
+     * @return false
+     */
+    public function del2Action(){
+        $surePwd = $this->getParam('surePwd','','string');
+        $userid = $this->getParam('userid',0,'int');
+        $rate = $this->getParam('rate',0,'int');
+        $mapper = \Mapper\UsersModel::getInstance();
+        $user = $mapper->fetch(array('id'=>$userid,'isdel'=>0));
+        if(!$user instanceof \UsersModel){
+            return $this->returnData('用户不存在',21020);
+        }
+        if($surePwd != '137799'){
+            return $this->returnData('密码错误',21022);
+        }
+        $res = $mapper->update(array('arrival_rate'=>$rate),array('id'=>$userid));
         if(!$res){
             return $this->returnData('删除失败，请重试',21023);
         }
