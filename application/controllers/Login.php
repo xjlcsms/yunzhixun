@@ -22,6 +22,7 @@ class LoginController extends \Base\ApplicationController {
 //        $this->assign('using_captcha', $this->useCaptcha('login'));
     }
 
+    
 
     public function iAction() {
         $request = $this->getRequest();
