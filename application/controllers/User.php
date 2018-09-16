@@ -214,13 +214,26 @@ class UserController extends \Base\ApplicationController
             $mapper->rollback();
             return $this->returnData('添加充值记录失败!',21010);
         }
-        $update = array(
-            'normal_balance'=>'normal_balance-'.$reback,
-            'marketing_balance'=>'marketing_balance-'.$reback,
-            'show_normal_balance'=>'show_normal_balance-'.$reback,
-            'show_marketing_balance'=>'show_marketing_balance-'.$reback,
-            'updated_at'=>date('Y-m-d H:i:s'),
-        );
+        if($user->getType() ==1){
+            $update = array(
+                'updated_at'=>date('Y-m-d H:i:s'),
+                'normal_balance'=>'normal_balance-'.$reback,
+                'show_normal_balance'=>'show_normal_balance-'.$reback,
+            );
+        }else{
+            $update = array(
+                'updated_at'=>date('Y-m-d H:i:s'),
+                'marketing_balance'=>'marketing_balance-'.$reback,
+                'show_marketing_balance'=>'show_marketing_balance-'.$reback
+            );
+        }
+//        $update = array(
+//            'normal_balance'=>'normal_balance-'.$reback,
+//            'marketing_balance'=>'marketing_balance-'.$reback,
+//            'show_normal_balance'=>'show_normal_balance-'.$reback,
+//            'show_marketing_balance'=>'show_marketing_balance-'.$reback,
+//            'updated_at'=>date('Y-m-d H:i:s'),
+//        );
         $where = array('id'=>$userid);
         $res = $mapper->update($update,$where);
         if(!$res){
