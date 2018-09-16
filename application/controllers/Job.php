@@ -395,7 +395,6 @@ class JobController extends Base\ApplicationController{
         foreach ($users as $user){
             $userData[$user->getId()] = $user->getUsername();
         }
-        var_dump($userData);
         $this->assign('users',$userData);
     }
 

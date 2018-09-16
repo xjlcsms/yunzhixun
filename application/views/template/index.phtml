@@ -69,14 +69,14 @@
                         <?php foreach ($this->pager->getList() as $key=>$value):?>
                           <tbody>
                             <tr>
-                              <td style="line-height: 34px"><?php echo $mapper->getUsername($value['user_id']);?></td>
-                              <td style="line-height: 34px"><?php echo $mapper->getName($value['user_id']);?></td>
-                              <td style="line-height: 34px"><?php echo $this->accounts[$value['classify']]?></td>
-                              <td style="line-height: 34px"><?php echo $this->types[$value['type']]?></td>
-                              <td style="line-height: 34px"><?php echo $value['sign']?></td>
-                              <td style="line-height: 34px;overflow: hidden;width: 200px"><p style="width: 200px;cursor: pointer;white-space: nowrap; text-overflow: ellipsis;overflow: hidden;" class="showcontent"><?php echo $value['content']?></p></td>
-                              <td style="line-height: 34px"><?php echo $this->templateStatus[$value['status']]?></td>
-                              <td style="line-height: 34px"><?php echo $value['reason']?></td>
+                              <td><?php echo $mapper->getUsername($value['user_id']);?></td>
+                              <td><?php echo $mapper->getName($value['user_id']);?></td>
+                              <td><?php echo $this->accounts[$value['classify']]?></td>
+                              <td><?php echo $this->types[$value['type']]?></td>
+                              <td><?php echo $value['sign']?></td>
+                              <td style="overflow: hidden;width: 200px"><p style="width: 200px;cursor: pointer;white-space: nowrap; text-overflow: ellipsis;overflow: hidden;" class="showcontent"><?php echo $value['content']?></p></td>
+                              <td><?php echo $this->templateStatus[$value['status']]?></td>
+                              <td><?php echo $value['reason']?></td>
                               <td>
                                 <a class="btn btn-default btn-sm recharge">审核</a>
                               </td>
