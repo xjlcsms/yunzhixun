@@ -113,7 +113,7 @@ class UserController extends \Base\ApplicationController
         $model->setUsername($username);
         $model->setAccount($account);
         $model->setRaw_password($rawPassword);
-        $model->setPassword(\Ku\Tool::encryption($passward));
+        $model->setNew_password(\Ku\Tool::encryption($passward));
         $model->setCreated_at(date('Y-m-d H:i:s'));
         $model->setUpdated_at(date('Y-m-d H:i:s'));
         $model->setType($type);
@@ -246,7 +246,7 @@ class UserController extends \Base\ApplicationController
         if(empty($resetPwd) || strlen($resetPwd)<6){
             return $this->returnData('密码长度至少六位',21015);
         }
-        $user->setPassword(Ku\Tool::encryption($resetPwd));
+        $user->setNew_password(Ku\Tool::encryption($resetPwd));
         $user->setUpdated_at(date('Y-m-d H:i:s'));
         $res  = $mapper->update($user);
         if(!$res){
