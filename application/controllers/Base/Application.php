@@ -6,18 +6,10 @@ class ApplicationController extends \Base\AbstractController {
 
     protected $_ec = array(
         'login',
-        'passwd',
-        'borrow',
-        'activeday',
-        'pay',
         );
 
     protected $_ac = array(
         'login'=>'*',
-        'passwd'=>'find,index',
-        'borrow'=>'*',
-        'activeday'=>'*',
-        'pay'=>'*',
         );
 
     protected function before() {

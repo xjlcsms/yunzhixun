@@ -23,11 +23,6 @@ phpSettings.session.cookie_domain           = ".yzx.com"
 phpSettings.session.session.cookie_httponly = 1
 
 
-
-;resources.sms.xuanwu.account = 'jkw@xmliantu'
-;resources.sms.xuanwu.password = 'KdD36teq'
-;resources.sms.xuanwu.subid = ''
-;resources.sms.xuanwu.msgtype = 1
 [product:common]
 
 [develop:product]
