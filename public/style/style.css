@@ -32,12 +32,8 @@
 .search-form .input-group .form-control {
   float: none;
 }
- .moda .modal-dialog {
-  margin: 0;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-40%,-50%);
+ .modal .modal-dialog {
+  margin-top: 200px;
 }
 .open-user-modal .radio {
   padding-left: 0px; 

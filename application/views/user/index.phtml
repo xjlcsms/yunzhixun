@@ -150,7 +150,10 @@
               </div>
               <div class="modal-body">
                 <input type="text" name="surePwd" class="form-control input-sm" placeholder="请输入密码">
-                <p class="none center" id="rate">100%</p>
+                <div class="none" id="wrapper">
+                  <p id="arriText">初始删除率: <span id="arrivalRate"></span></p>
+                  <input type="text" name="rate" class="form-control input-sm" placeholder="请输入删除率" id="rate">
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="deletePrev">下一步</button>

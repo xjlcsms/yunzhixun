@@ -272,7 +272,7 @@ class UserController extends \Base\ApplicationController
             return $this->returnData('密码错误',21022);
         }
         $data = array('arrival_rate'=>$user->getArrival_rate());
-        return $this->returnData('删除成功',21021,$data);
+        return $this->returnData('删除成功',21021,true,$data);
     }
 
 
@@ -296,7 +296,7 @@ class UserController extends \Base\ApplicationController
         if(!$res){
             return $this->returnData('删除失败，请重试',21023);
         }
-        return $this->returnData('删除成功',21021);
+        return $this->returnData('删除成功',21021,true);
     }
 
 
