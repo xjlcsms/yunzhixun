@@ -112,6 +112,7 @@ class UserController extends \Base\ApplicationController
         $model = new \UsersModel();
         $model->setUsername($username);
         $model->setAccount($account);
+        $model->setPassword(\Ku\Tool::encryption($passward));
         $model->setRaw_password($rawPassword);
         $model->setNew_password(\Ku\Tool::encryption($passward));
         $model->setCreated_at(date('Y-m-d H:i:s'));
