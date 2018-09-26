@@ -25,11 +25,11 @@
               </div>
               <div class="form-group open-user-modal">
                 <label class="control-label col-sm-2">号码池</label>
-                <div class="col-md-4">
-                  <div class="radio col-md-2">
+                <div class="col-md-4 col-lg-6">
+                  <div class="radio col-md-2 col-lg-2">
                     <label><input type="radio" name="smstype" value="1" checked>批量导入</label>
                   </div>
-                  <div class="radio col-md-2">
+                  <div class="radio col-md-2 col-lg-2">
                     <label><input type="radio" name="smstype" value="2">手动输入</label>
                   </div>
                 </div>
@@ -45,7 +45,7 @@
               </div>
               <div class="form-group none" id="result">
                 <label class="control-label col-sm-2"><span id="fileName"></span></label>
-                <div class="col-md-4 control-label text-left">
+                <div class="col-md-4 col-md-6 control-label text-left">
                   <label>共计号码数：<span id="totalNum">0</span>个，有效号码数：<span id="useNum">0</span>个(已过滤错误号码：<span id="errNum">0</span>个，已过滤重复号码<span id="reNum">0</span>个)</label>
                 </div>
                 <a class="btn btn-primary btn-sm" id="delSmsFile">删除</a>
@@ -58,7 +58,7 @@
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-2">短信类型</label>
-                <div class="col-sm-1">
+                <div class="col-sm-1 col-lg-2">
                   <select class="form-control" name="type" id="type">
                       <?php foreach ($this->sendTypes as $key =>$value):?>
                           <option value="<?php echo $key;?>" <?php echo $key==$this->task['sms_type']?'selected':'';?>><?php echo $value;?></option>
