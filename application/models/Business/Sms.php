@@ -65,9 +65,9 @@ class SmsModel  extends \Business\AbstractModel
      * @return bool
      */
     public function virefy(\UsersModel $user,$content,$type,$sendTotal){
-        if(!in_array($type , $this->_userTypes[$user->getType()])){
-            return $this->getMsg(29209,'发送的短信类型与用户类型不一致');
-        }
+//        if(!in_array($type , $this->_userTypes[$user->getType()])){
+//            return $this->getMsg(29209,'发送的短信类型与用户类型不一致');
+//        }
         $strlen = mb_strlen($content);
         if($strlen>500){
             return $this->getMsg(29206,'消息长度不能超过500字');
