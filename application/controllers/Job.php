@@ -151,7 +151,6 @@ class JobController extends Base\ApplicationController{
         $type = $this->getParam('type',0,'int');
         $smstype = $this->getParam('smstype',0,'int');
         $taskid = $this->getParam('taskid',0,'int');
-        $sign = $this->getParam('sign',0,'string');
         $content = $this->getParam('content','','string');
         $task = \Mapper\SendtasksModel::getInstance()->findById($taskid);
         if(!$task instanceof \SendtasksModel){
