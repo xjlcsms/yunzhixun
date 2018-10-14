@@ -78,7 +78,7 @@
                               <td><?php echo $this->templateStatus[$value['status']]?></td>
                               <td><?php echo $value['reason']?></td>
                               <td>
-                                <a class="btn btn-default btn-sm recharge">审核</a>
+                                <a class="btn btn-default btn-sm recharge" data-id="<?php echo $value['id']?>">审核</a>
                               </td>
                             </tr>
                           </tbody>
@@ -136,8 +136,8 @@
                   <div class="form-group">
                     <label class="control-label col-sm-3">审核原因</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="text" name="id" value="1" hidden="">
-                      <input name="reason" type="text" class="form-control" placeholder="请输入审核原因">
+                      <input type="text" name="id" hidden="" id="id">
+                      <input name="reason" type="text" class="form-control" placeholder="请输入审核原因" id="reason">
                     </div>
                     <div style="clear: both;overflow: hidden;"></div>
                     <p class="col-sm-offset-3" style="margin-top: 5px;padding-left: 11px;color: #d9534f;">若选择不通过，则审核原因必须输入</p>
