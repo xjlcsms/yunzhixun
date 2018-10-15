@@ -91,8 +91,8 @@
                         <td><?php echo $value['phone'];?></td>
                           <?php if($value['task_id']==0):?>
                               <td><?php echo $value['content'];?></td>
-                          <?php else: $taskMapper = \Mapper\SendtasksModel::getInstance();?>
-                              <td><?php echo $taskMapper->getContent($value['task_id']);?></td>
+                          <?php else: $queueMapper = \Mapper\SmsqueueModel::getInstance();?>
+                              <td><?php echo $queueMapper->getContent($value['task_id']);?></td>
                           <?php endif;?>
                         <td><?php echo $value['status'];?></td>
                         <td><?php echo $value['report_status'];?></td>
