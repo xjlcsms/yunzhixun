@@ -41,7 +41,12 @@ var inputLock = false;
     content = title + '' + content;
     showLen(content);
   });
-
+  // 号码池改变事件
+  $('input[name="smstype"]').change(function() {
+    if (input[name="smstype"] == 1) {
+      $('#phoneText').val('');
+    }
+  })
   // 字数统计
   $('textarea[name="content"]').bind('input propertychange', function() { 
     var content = $(this).val()
@@ -156,5 +161,10 @@ function showLen(content) {
   $('#content').val(content);
   $('#num').text(len);
   $('#branch').text(parseInt(branch));
+  if ($('input[name="smstype"]:checked').val() == 2) {
+    if ($('#phoneText').val() != '') {
+      unum = $('#phoneText').val().split(',').length;
+    }
+  }
   $('#use').text(parseInt(branch) * unum);
 }
