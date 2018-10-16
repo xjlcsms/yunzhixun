@@ -89,7 +89,11 @@
                       <tr>
                         <td><?php echo $key;?></td>
                         <td><?php echo $value['phone'];?></td>
-                        <td><?php echo $value['content'];?></td>
+                          <?php if($value['task_id']==0):?>
+                              <td><?php echo $value['content'];?></td>
+                          <?php else: $queueMapper = \Mapper\SmsqueueModel::getInstance();?>
+                              <td><?php echo $queueMapper->getContent($value['task_id']);?></td>
+                          <?php endif;?>
                         <td><?php echo $value['status'];?></td>
                         <td><?php echo $value['report_status'];?></td>
                         <td><?php echo $value['code'];?></td>

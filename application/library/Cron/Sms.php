@@ -71,7 +71,7 @@ class Sms extends \Cron\CronAbstract {
             $order->setTask_id($model->getTask_id());
             $order->setUser_id($task->getUser_id());
             $order->setSms_type($model->getType());
-            $order->setContent($model->getContent());
+            $order->setContent('');
             foreach ($result['data'] as $datum){
                 $order->setUid($datum['uid']);
                 $order->setSid($datum['sid']);

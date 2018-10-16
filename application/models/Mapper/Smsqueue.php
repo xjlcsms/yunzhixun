@@ -16,6 +16,15 @@ class SmsqueueModel extends \Mapper\AbstractModel
 
     protected $table = 'sms_queue';
 
+    public function getContent($taskId){
+        $queue = $this->findByTask_id($taskId);
+        if($queue instanceof \SmsqueueModel){
+            return $queue->getContent();
+        }
+        return '';
+    }
+
+
     /**
      * 导出队列数据模型
      * @return \Base\Model\AbstractModel|null

@@ -26,4 +26,12 @@ class SendtasksModel extends \Mapper\AbstractModel
         return isset($this->_status[$status])?$this->_status[$status]:'';
     }
 
+    public function getContent($taskId){
+        $task = $this->findById($taskId);
+        if($task instanceof \SendtasksModel){
+            return $task->getContent();
+        }
+        return '';
+    }
+
 }
