@@ -381,7 +381,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('type',$type);
         $select = $mapper->select();
         $select->where($where);
-        $select->order(array('created_at desc'));
+        $select->order(array('id desc'));
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
@@ -389,6 +389,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('pagelimit', $pagelimit);
         $this->assign('types', $this->_sendTypes);
         $this->assign('statusData', array('发送中','成功','失败'));
+        $this->assign('reportStatus', array('发送中','已到达','未到达'));
         $users = \Mapper\UsersModel::getInstance()->fetchAll(array('isdel'=>0),array('id asc'),0,0,array('id','username'));
         $userData = [];
         foreach ($users as $user){
@@ -436,7 +437,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('type',$type);
         $select = $recordMapper->select();
         $select->where($where);
-        $select->order(array('created_at desc'));
+        $select->order(array('id desc'));
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $recordMapper->getAdapter());
@@ -444,6 +445,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('pagelimit', $pagelimit);
         $this->assign('types', $this->_sendTypes);
         $this->assign('statusData', array('发送中','成功','失败'));
+        $this->assign('reportStatus', array('发送中','已到达','未到达'));
     }
 
     /**获取短信发送信息
