@@ -41,7 +41,12 @@ var inputLock = false;
     content = title + '' + content;
     showLen(content);
   });
-
+  // 号码池改变事件
+  $('input[name="smstype"]').change(function() {
+    if (input[name="smstype"] == 1) {
+      $('#phoneText').val('');
+    }
+  })
   // 字数统计
   $('textarea[name="content"]').bind('input propertychange', function() { 
     var content = $(this).val()
@@ -82,7 +87,7 @@ var inputLock = false;
           $('#fileName').text(res.data.filename);
           $('#totalNum').text(res.data.total);
           $('#useNum').text(res.data.true);
-          unum = res.data.true;
+          showLen($('#content').val());
           $('#errNum').text(res.data.repeat);
           $('#reNum').text(res.data.repeat);
           $('#auto').addClass('none');
@@ -107,6 +112,8 @@ var inputLock = false;
         $('#smsFile').val('');
         $('#result').addClass('none');
         $('#auto').removeClass('none');
+        $('#useNum').text('');
+        showLen($('#content').val());
       } else {
         alert(res.msg);
       }
@@ -133,20 +140,30 @@ var inputLock = false;
         alert(res.msg)
       }
     })
+  });
+  // 监听短信发送类型
+  $('input[name=smstype]').change(function() {
+    showLen($('#content').val());
   })
+  // 监听手机输入
+  $('textarea[name="phoneText"]').bind('input propertychange', function() { 
+    showLen($('#content').val());
+  });
 })()
 
 function showLen(content) {
   var len = 0;
-  var branch = 1;
-
+  var branch = 0;
+  var mobileArr = [];
   len = content.length;
   if (len >= 498 ) {
     content = content.substring(0,500);
   }
   len = content.length;
-  if (len <= 70) {
+  if (len <= 70 && len != 0) {
+    branch = 1;
   } else {
+    branch = 1;
     if ((len - 70) % 68 == 0) {
       branch += (len - 70)/68;
     } else {
@@ -156,5 +173,22 @@ function showLen(content) {
   $('#content').val(content);
   $('#num').text(len);
   $('#branch').text(parseInt(branch));
+  if ($('input[name="smstype"]:checked').val() == 2) {
+    unum = 0;
+    if ($('#phoneText').val() != '') {
+      if ($('#phoneText').val().indexOf('，') > -1) {
+        mobileArr = $('#phoneText').val().split('，');
+      } else {
+        mobileArr = $('#phoneText').val().split(',');
+      }
+      for (var i in mobileArr) {
+        if (mobileArr[i].length == 11) {
+          unum++
+        }
+      }
+    }
+  } else {
+    unum = $('#useNum').text() != '' ? parseInt($('#useNum').text()) : 0;
+  }
   $('#use').text(parseInt(branch) * unum);
 }
