@@ -9,7 +9,7 @@
 class UserController extends \Base\ApplicationController
 {
 
-    private $_accounts = array(1=>'行业短信',2=>'营销短信',3=>'特殊短信');
+    private $_accounts = array(1=>'行业短信',2=>'营销短信');
     private $_actions = array(1=>'充值',2=>'回退');
 
     /**
@@ -46,7 +46,7 @@ class UserController extends \Base\ApplicationController
     public function recordsAction(){
         $where = [];
         $userid = $this->getParam('userid','','int');
-        $acount = $this->getParam('acount',0,'int');
+        $acount = $this->getParam('account',0,'int');
         $direction = $this->getParam('direction',0,'int');
         $time = $this->getParam('time',0,'string');
         if($userid){
@@ -134,6 +134,7 @@ class UserController extends \Base\ApplicationController
     public function rechargeAction(){
         $userid = $this->getParam('userid',0,'int');
         $recharge = $this->getParam('recharge',0,'int');
+        $account = $this->getParam('account',0,'int');
         if(empty($recharge)){
             return $this->returnData('请输入正确的充值数目',21006);
         }
@@ -143,18 +144,20 @@ class UserController extends \Base\ApplicationController
             return $this->returnData('充值用户不存在',21007);
         }
 //        $time = date('Y-m-d H:i:s');
-        if($user->getType() ==1){
+        if($account ==1){
             $update = array(
                 'updated_at'=>date('Y-m-d H:i:s'),
                 'normal_balance'=>'normal_balance+'.$recharge,
                 'show_normal_balance'=>'show_normal_balance+'.$recharge,
             );
-        }else{
+        }elseif($account == 2){
             $update = array(
                 'updated_at'=>date('Y-m-d H:i:s'),
                 'marketing_balance'=>'marketing_balance+'.$recharge,
                 'show_marketing_balance'=>'show_marketing_balance+'.$recharge
             );
+        }else{
+            return $this->returnData('参数错误',1000);
         }
         $where = array('id'=>$userid);
         $mapper->begin();
@@ -170,7 +173,7 @@ class UserController extends \Base\ApplicationController
         $model->setAdmin_id($admin->getId());
         $model->setUpdated_at(date('Y-m-d H:i:s'));
         $model->setUser_id($userid);
-        $model->setType($user->getType());
+        $model->setType($account);
         $model->setDirection(1);
         $model->setAmount($recharge);
         $model->setShow_amount($recharge);
@@ -190,6 +193,7 @@ class UserController extends \Base\ApplicationController
     public function rebackAction(){
         $userid = $this->getParam('userid',0,'int');
         $reback = $this->getParam('reback',0,'int');
+        $account = $this->getParam('account',0,'int');
         $mapper = \Mapper\UsersModel::getInstance();
         $user = $mapper->findById($userid);
         if(!$user instanceof \UsersModel){
@@ -197,6 +201,21 @@ class UserController extends \Base\ApplicationController
         }
         if(empty($reback)){
             return $this->returnData('回退数量不能为零',21012);
+        }
+        if( $account  ==1){
+            $update = array(
+                'updated_at'=>date('Y-m-d H:i:s'),
+                'normal_balance'=>'normal_balance-'.$reback,
+                'show_normal_balance'=>'show_normal_balance-'.$reback,
+            );
+        }elseif( $account  ==2){
+            $update = array(
+                'updated_at'=>date('Y-m-d H:i:s'),
+                'marketing_balance'=>'marketing_balance-'.$reback,
+                'show_marketing_balance'=>'show_marketing_balance-'.$reback
+            );
+        }else{
+            return $this->returnData('参数错误',1000);
         }
         $mapper->begin();
         $business = \Business\LoginModel::getInstance();
@@ -213,20 +232,7 @@ class UserController extends \Base\ApplicationController
         $res = \Mapper\RechargerecordsModel::getInstance()->insert($model);
         if(!$res){
             $mapper->rollback();
-            return $this->returnData('添加充值记录失败!',21010);
-        }
-        if($user->getType() ==1){
-            $update = array(
-                'updated_at'=>date('Y-m-d H:i:s'),
-                'normal_balance'=>'normal_balance-'.$reback,
-                'show_normal_balance'=>'show_normal_balance-'.$reback,
-            );
-        }else{
-            $update = array(
-                'updated_at'=>date('Y-m-d H:i:s'),
-                'marketing_balance'=>'marketing_balance-'.$reback,
-                'show_marketing_balance'=>'show_marketing_balance-'.$reback
-            );
+            return $this->returnData('添加回退记录失败!',21010);
         }
 //        $update = array(
 //            'normal_balance'=>'normal_balance-'.$reback,

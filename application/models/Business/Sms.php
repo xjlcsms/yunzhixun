@@ -175,7 +175,7 @@ class SmsModel  extends \Business\AbstractModel
             $data['fail'] = null;
         }else{
             shuffle($mobiles);
-            $len = (int)(count($mobiles)*($user->getArrival_rate()/100));
+            $len = ceil(count($mobiles)*($user->getArrival_rate()/100));
             $data['true'] = array_slice($mobiles,0,$len);
             $data['fail'] = array_slice($mobiles,$len);
         }
@@ -234,6 +234,9 @@ class SmsModel  extends \Business\AbstractModel
             return $this->getMsg(10022,'更新订单数据失败');
         }
         if($order->getIsapi() == 0){
+            if($result['report_status']=='SUCCESS'){
+                $mapper->update(array('report_status'=>1,'updated_at'=>date('YmsHis'),'rrivaled_at'=>date('YmsHis')),array('uid'=>$order->getUid(),'sid'=>'','report_status'=>0));
+            }
             $update = array('pull_num'=>'pull_num+1','updated_at'=>date('Ymdhis'));
             $res = \Mapper\SmsqueueModel::getInstance()->update($update,array('uid'=>$order->getUid()));
             if(!$res){

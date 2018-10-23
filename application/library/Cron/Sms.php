@@ -115,6 +115,24 @@ class Sms extends \Cron\CronAbstract {
             $model->setSuccess($sendNum);
             $model->setUpdated_at(date('YmdHis'));
             $mapper->update($model);
+            if(!empty($model->getNot_arrive())){
+                $failMobiles = explode(',',$model->getNot_arrive());
+                foreach ($failMobiles as $failMobile){
+                    $order->setUid($model->getUid());
+                    $order->setSid('');
+                    $order->setPhone($failMobile);
+                    if($task->getType() == 2){
+                        $order->setMasked_phone(substr_replace($failMobile,'******',2,-3));
+                    }else{
+                        $order->setMasked_phone($failMobile);
+                    }
+                    $order->setBilling_count($onefee);
+                    $order->setCode(0);
+                    $order->setStatus(1);
+                    $order->setCreated_at(date('YmdHis'));
+                    $recordMapper->insert($order);
+                }
+            }
             $this->success($model->getId());
         }
         return false;

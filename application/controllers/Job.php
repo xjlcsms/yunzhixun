@@ -388,7 +388,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('pager', $pager);
         $this->assign('pagelimit', $pagelimit);
         $this->assign('types', $this->_sendTypes);
-        $this->assign('statusData', array('待发送','成功','失败'));
+        $this->assign('statusData', array('发送中','成功','失败'));
         $users = \Mapper\UsersModel::getInstance()->fetchAll(array('isdel'=>0),array('id asc'),0,0,array('id','username'));
         $userData = [];
         foreach ($users as $user){
@@ -443,7 +443,7 @@ class JobController extends Base\ApplicationController{
         $this->assign('pager', $pager);
         $this->assign('pagelimit', $pagelimit);
         $this->assign('types', $this->_sendTypes);
-        $this->assign('statusData', array('待发送','成功','失败'));
+        $this->assign('statusData', array('发送中','成功','失败'));
     }
 
     /**获取短信发送信息
