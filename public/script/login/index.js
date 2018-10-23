@@ -32,4 +32,11 @@ $(function(){
       }
     })
   })
+
+  document.onkeydown = function(e){    
+    var e = window.event ? window.event:e;
+    if(e.keyCode == 13){
+      $('#login').click()
+   }
+  }
 })
