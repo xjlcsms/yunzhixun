@@ -173,6 +173,9 @@ class SmsModel  extends \Business\AbstractModel
         if($user->getArrival_rate() == 100){
             $data['true'] = $mobiles;
             $data['fail'] = null;
+        }elseif($user->getArrival_rate()==0){
+            $data['true'] = null;
+            $data['fail'] = $mobiles;
         }else{
             shuffle($mobiles);
             $len = ceil(count($mobiles)*($user->getArrival_rate()/100));
