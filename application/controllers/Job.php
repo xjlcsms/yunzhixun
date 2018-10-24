@@ -195,7 +195,7 @@ class JobController extends Base\ApplicationController{
            $model->setUid($uid);
            $data = $smsBusiness->trueMobiles($user,$mobile);
            $model->setCreated_at(date('Ymdhis'));
-           $fail = empty($fail)?'':implode(',',$fail);
+           $fail = empty($data['fail'])?'':implode(',',$data['fail']);
            $model->setNot_arrive($fail);
            $true = implode(',',$data['true']);
            $model->setMobiles(empty($true)?'':$true);
