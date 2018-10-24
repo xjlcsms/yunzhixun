@@ -50,6 +50,7 @@ class Sms extends \Cron\CronAbstract {
                 $mapper->update($model);
                 continue;
             }
+            $sendNum = 0;
             if(!empty($model->getMobiles())){
                 $result = $business->sms($user,$model);
                 if($result === false or !isset($result['total_fee']) ){
@@ -106,14 +107,9 @@ class Sms extends \Cron\CronAbstract {
                     $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_true','fee'=>$result['total_fee'])));
                     $this->log('Id:'.$model->getId().':fail,扣除用户余额失败');
                 }
+                $sendNum = $result['total_fee']/$onefee;
             }
             $onefee = $business->oneFee($task->getContent());
-            $sendNum = $result['total_fee']/$onefee;
-            if($model->getSend_num() > $sendNum){
-                $model->setStatus(3);
-            }else{
-                $model->setStatus(2);
-            }
             if(!empty($model->getNot_arrive())){
                 $order = new \SmsrecordModel();
                 $order->setTask_id($model->getTask_id());
@@ -137,6 +133,11 @@ class Sms extends \Cron\CronAbstract {
                     $order->setCreated_at(date('YmdHis'));
                     $recordMapper->insert($order);
                 }
+            }
+            if($model->getSend_num() > $sendNum){
+                $model->setStatus(3);
+            }else{
+                $model->setStatus(2);
             }
             $model->setSuccess($sendNum);
             $model->setUpdated_at(date('YmdHis'));
