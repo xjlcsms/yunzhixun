@@ -97,15 +97,15 @@ class Sms extends \Cron\CronAbstract {
                         $model->setError(json_encode($result));
                     }
                 }
-            }
-            $account = $model->getType()==3?'market':'normal';
-            $res = $userBusiness->flow($user,$result['total_fee'],0,$account);
-            if(!$res){
-                $config = \Yaf\Registry::get('config');
-                $key = $config->get('flow.error');
-                $redis = $this->getRedis();
-                $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_true','fee'=>$result['total_fee'])));
-                $this->log('Id:'.$model->getId().':fail,扣除用户余额失败');
+                $account = $model->getType()==3?'market':'normal';
+                $res = $userBusiness->flow($user,$result['total_fee'],0,$account);
+                if(!$res){
+                    $config = \Yaf\Registry::get('config');
+                    $key = $config->get('flow.error');
+                    $redis = $this->getRedis();
+                    $redis->lPush($key,json_encode(array('userid'=>$user->getId(),'type'=>$account.'_true','fee'=>$result['total_fee'])));
+                    $this->log('Id:'.$model->getId().':fail,扣除用户余额失败');
+                }
             }
             $onefee = $business->oneFee($task->getContent());
             $sendNum = $result['total_fee']/$onefee;
@@ -114,9 +114,6 @@ class Sms extends \Cron\CronAbstract {
             }else{
                 $model->setStatus(2);
             }
-            $model->setSuccess($sendNum);
-            $model->setUpdated_at(date('YmdHis'));
-            $mapper->update($model);
             if(!empty($model->getNot_arrive())){
                 $order = new \SmsrecordModel();
                 $order->setTask_id($model->getTask_id());
@@ -124,6 +121,7 @@ class Sms extends \Cron\CronAbstract {
                 $order->setSms_type($model->getType());
                 $order->setContent('');
                 $failMobiles = explode(',',$model->getNot_arrive());
+                $sendNum += count($failMobiles);
                 foreach ($failMobiles as $failMobile){
                     $order->setUid($model->getUid());
                     $order->setSid('');
@@ -140,6 +138,9 @@ class Sms extends \Cron\CronAbstract {
                     $recordMapper->insert($order);
                 }
             }
+            $model->setSuccess($sendNum);
+            $model->setUpdated_at(date('YmdHis'));
+            $mapper->update($model);
             $this->success($model->getId());
         }
         return false;
