@@ -118,6 +118,11 @@ class Sms extends \Cron\CronAbstract {
             $model->setUpdated_at(date('YmdHis'));
             $mapper->update($model);
             if(!empty($model->getNot_arrive())){
+                $order = new \SmsrecordModel();
+                $order->setTask_id($model->getTask_id());
+                $order->setUser_id($task->getUser_id());
+                $order->setSms_type($model->getType());
+                $order->setContent('');
                 $failMobiles = explode(',',$model->getNot_arrive());
                 foreach ($failMobiles as $failMobile){
                     $order->setUid($model->getUid());
