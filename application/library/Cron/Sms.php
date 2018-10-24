@@ -49,51 +49,53 @@ class Sms extends \Cron\CronAbstract {
                 $mapper->update($model);
                 continue;
             }
-            $result = $business->sms($user,$model);
-            if($result === false or !isset($result['total_fee']) ){
-                $this->log('Id:'.$model->getId().':fail,短信发送失败');
-                $model->setError(json_encode($result));
-                $model->setStatus(4);
-                $model->setUpdated_at(date('YmdHis'));
-                $mapper->update($model);
-                continue;
-            }
-            if($result['total_fee'] == 0){
-                $this->log('Id:'.$model->getId().':fail,短信发送失败');
-                $model->setStatus(4);
-                $model->setError(json_encode($result));
-                $model->setUpdated_at(date('YmdHis'));
-                $mapper->update($model);
-                continue;
-            }
-            $recordMapper = \Mapper\SmsrecordModel::getInstance();
-            $order = new \SmsrecordModel();
-            $order->setTask_id($model->getTask_id());
-            $order->setUser_id($task->getUser_id());
-            $order->setSms_type($model->getType());
-            $order->setContent('');
-            foreach ($result['data'] as $datum){
-                $order->setUid($datum['uid']);
-                $order->setSid($datum['sid']);
-                $order->setPhone($datum['mobile']);
-                if($task->getType() == 2){
-                    $order->setMasked_phone(substr_replace($datum['mobile'],'******',2,-3));
-                }else{
-                    $order->setMasked_phone($datum['mobile']);
-                }
-                $order->setBilling_count($datum['fee']);
-                $order->setCode($datum['code']);
-                if($datum['code']!=0){
-                    $order->setMessage($datum['msg']);
-                    $order->setStatus(2);
-                }else{
-                    $order->setStatus(1);
-                }
-                $order->setCreated_at(date('YmdHis'));
-                $res = $recordMapper->insert($order);
-                if($res === false){
-                    $this->log($datum['sid'].'添加订单失败');
+            if(!empty($model->getMobiles())){
+                $result = $business->sms($user,$model);
+                if($result === false or !isset($result['total_fee']) ){
+                    $this->log('Id:'.$model->getId().':fail,短信发送失败');
                     $model->setError(json_encode($result));
+                    $model->setStatus(4);
+                    $model->setUpdated_at(date('YmdHis'));
+                    $mapper->update($model);
+                    continue;
+                }
+                if($result['total_fee'] == 0){
+                    $this->log('Id:'.$model->getId().':fail,短信发送失败');
+                    $model->setStatus(4);
+                    $model->setError(json_encode($result));
+                    $model->setUpdated_at(date('YmdHis'));
+                    $mapper->update($model);
+                    continue;
+                }
+                $recordMapper = \Mapper\SmsrecordModel::getInstance();
+                $order = new \SmsrecordModel();
+                $order->setTask_id($model->getTask_id());
+                $order->setUser_id($task->getUser_id());
+                $order->setSms_type($model->getType());
+                $order->setContent('');
+                foreach ($result['data'] as $datum){
+                    $order->setUid($datum['uid']);
+                    $order->setSid($datum['sid']);
+                    $order->setPhone($datum['mobile']);
+                    if($task->getType() == 2){
+                        $order->setMasked_phone(substr_replace($datum['mobile'],'******',2,-3));
+                    }else{
+                        $order->setMasked_phone($datum['mobile']);
+                    }
+                    $order->setBilling_count($datum['fee']);
+                    $order->setCode($datum['code']);
+                    if($datum['code']!=0){
+                        $order->setMessage($datum['msg']);
+                        $order->setStatus(2);
+                    }else{
+                        $order->setStatus(1);
+                    }
+                    $order->setCreated_at(date('YmdHis'));
+                    $res = $recordMapper->insert($order);
+                    if($res === false){
+                        $this->log($datum['sid'].'添加订单失败');
+                        $model->setError(json_encode($result));
+                    }
                 }
             }
             $account = $model->getType()==3?'market':'normal';
