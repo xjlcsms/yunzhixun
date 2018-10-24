@@ -20,6 +20,7 @@ class Sms extends \Cron\CronAbstract {
         $mapper = \Mapper\SmsqueueModel::getInstance();
         $business = \Business\SmsModel::getInstance();
         $userBusiness = \Business\UserModel::getInstance();
+        $recordMapper = \Mapper\SmsrecordModel::getInstance();
         $begin = time();
         while (time() - $begin <60){
             $model = $mapper->pull();
@@ -67,7 +68,6 @@ class Sms extends \Cron\CronAbstract {
                     $mapper->update($model);
                     continue;
                 }
-                $recordMapper = \Mapper\SmsrecordModel::getInstance();
                 $order = new \SmsrecordModel();
                 $order->setTask_id($model->getTask_id());
                 $order->setUser_id($task->getUser_id());
