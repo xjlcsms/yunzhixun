@@ -39,6 +39,7 @@
                       <label>
                           <select class="form-control input-sm" name="report_status">
                               <option value="100" <?php echo 100==$this->report_status?'selected':'';?>>全部</option>
+                              <option value="0" <?php echo 0==$this->report_status?'selected':'';?>>发送中</option>
                               <option value="1" <?php echo 1==$this->report_status?'selected':'';?>>已到达</option>
                               <option value="2" <?php echo 2==$this->report_status?'selected':'';?>>未到达</option>
                           </select>
@@ -86,17 +87,17 @@
                     <?php $mapper = \Mapper\UsersModel::getInstance();?>
                     <?php foreach ($this->pager->getList() as $key=>$value):?>
                       <tr>
-                        <td><?php echo $key;?></td>
+                        <td><?php echo $value['id'];?></td>
                         <td><?php echo $value['phone'];?></td>
                           <?php if($value['task_id']==0):?>
                               <td><?php echo $value['content'];?></td>
                           <?php else: $queueMapper = \Mapper\SmsqueueModel::getInstance();?>
                               <td><?php echo $queueMapper->getContent($value['task_id']);?></td>
                           <?php endif;?>
-                        <td><?php echo $value['status'];?></td>
-                        <td><?php echo $value['report_status'];?></td>
+                        <td><?php echo $this->statusData[$value['status']];?></td>
+                        <td><?php echo $this->reportStatus[$value['report_status']];?></td>
                         <td><?php echo $value['code'];?></td>
-                        <td><?php echo $value['arrivaled_at'];?></td>
+                        <td><?php echo date('Y-m-d H:i:s',strtotime($value['arrivaled_at']));?></td>
                         <td><?php echo $value['billing_count'];?></td>
                       </tr>
                     <?php endforeach;?>

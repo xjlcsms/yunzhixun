@@ -25,9 +25,9 @@
                     </label>
                     <span>账户类型</span>
                     <label>
-                      <select class="form-control input-sm" name="acounts">
+                      <select class="form-control input-sm" name="account">
                           <option value="0">全部</option>
-                        <?php foreach ($this->acounts as $key =>$value):?>
+                        <?php foreach ($this->accounts as $key =>$value):?>
                             <option value="<?php echo $key;?>" <?php echo $key==$this->account?'selected':'';?>><?php echo $value;?></option>
                         <?php endforeach;?>
                       </select>
