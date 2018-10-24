@@ -235,7 +235,7 @@ class SmsModel  extends \Business\AbstractModel
         }
         if($order->getIsapi() == 0){
             if($result['report_status']=='SUCCESS'){
-                $mapper->update(array('report_status'=>1,'updated_at'=>date('YmsHis'),'rrivaled_at'=>date('YmsHis')),array('uid'=>$order->getUid(),'sid'=>'','report_status'=>0));
+                $mapper->update(array('report_status'=>1,'updated_at'=>date('YmsHis'),'rrivaled_at'=>date('YmdHis',strtotime($result['user_receive_time']))),array('uid'=>$order->getUid(),'sid'=>'','report_status'=>0));
             }
             $update = array('pull_num'=>'pull_num+1','updated_at'=>date('Ymdhis'));
             $res = \Mapper\SmsqueueModel::getInstance()->update($update,array('uid'=>$order->getUid()));
