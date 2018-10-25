@@ -63,8 +63,8 @@
                             <td><?php echo $this->accounts[$value['type']]?></td>
                             <td><?php echo $value['type']==1?$value['show_normal_balance']:$value['show_marketing_balance'];?></td>
                             <td>
-                                <a class="btn btn-default btn-sm recharge" data-id="<?php echo $value['id'];?>">充值</a>
-                                <a class="btn btn-default btn-sm rollback" data-id="<?php echo $value['id'];?>">回退</a>
+                                <a class="btn btn-default btn-sm recharge" data-id="<?php echo $value['id'];?>" data-account='<?php echo $value['type']?>'>充值</a>
+                                <a class="btn btn-default btn-sm rollback" data-id="<?php echo $value['id'];?>" data-account='<?php echo $value['type']?>'>回退</a>
                                 <a class="btn btn-default btn-sm reset" data-id="<?php echo $value['id'];?>">重置密码</a>
                                 <a class="btn btn-default btn-sm delete" data-id="<?php echo $value['id'];?>">帐号删除</a>
                                 <a class="btn btn-default btn-sm setCallbackUrl" data-id="<?php echo $value['id'];?>">设置回调地址</a>

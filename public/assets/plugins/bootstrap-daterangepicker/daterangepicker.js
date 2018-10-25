@@ -67,15 +67,14 @@
             direction: 'ltr',
             format: moment.localeData().longDateFormat('L'),
             separator: ' - ',
-            applyLabel: 'Apply',
-            cancelLabel: 'Cancel',
+            applyLabel: '确定',
+            cancelLabel: '取消',
             weekLabel: 'W',
             customRangeLabel: 'Custom Range',
-            daysOfWeek: moment.weekdaysMin(),
-            monthNames: moment.monthsShort(),
+            daysOfWeek: ['周日','周一','周二','周三','周四','周五','周六'],
+            monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
             firstDay: moment.localeData().firstDayOfWeek()
         };
-
         this.callback = function() { };
 
         //some state information
