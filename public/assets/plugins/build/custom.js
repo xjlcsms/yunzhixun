@@ -1613,8 +1613,8 @@ if (typeof NProgress != 'undefined') {
 				fromLabel: 'From',
 				toLabel: 'To',
 				customRangeLabel: 'Custom',
-				daysOfWeek: ['周一', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-				monthNames: ['1月', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+				daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+				monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 				firstDay: 1
 			  }
 			};
@@ -1688,8 +1688,8 @@ if (typeof NProgress != 'undefined') {
 					fromLabel: 'From',
 					toLabel: 'To',
 					customRangeLabel: 'Custom',
-					daysOfWeek: ['周一', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-					monthNames: ['1月', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+					daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+					monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 					firstDay: 1
 				  }
 				};

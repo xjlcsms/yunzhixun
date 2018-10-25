@@ -72,14 +72,14 @@ $(document).ready(function() {
         options.locale = {
           format: 'MM/DD/YYYY',
           separator: ' - ',
-          applyLabel: '确定',
-          cancelLabel: '取消',
+          applyLabel: 'Apply',
+          cancelLabel: 'Cancel',
           fromLabel: 'From',
           toLabel: 'To',
           customRangeLabel: 'Custom',
           weekLabel: 'W',
-          daysOfWeek: ['周日', '周一', '周二', '周三', '周四', '周五','周六'],
-          monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+          monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
           firstDay: 1
         };
       }
