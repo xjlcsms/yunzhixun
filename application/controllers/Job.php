@@ -98,7 +98,7 @@ class JobController extends Base\ApplicationController{
         }
         $select = $mapper->select();
         $select->where($where);
-        $select->order(array('created_at deac'));
+        $select->order(array('created_at desc'));
         $page = $this->getParam('page', 1, 'int');
         $pagelimit = $this->getParam('pagelimit', 15, 'int');
         $pager = new \Ku\Page($select, $page, $pagelimit, $mapper->getAdapter());
