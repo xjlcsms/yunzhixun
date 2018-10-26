@@ -6,7 +6,7 @@
   // 充值
   $('.recharge').click(function() {
     userid = $(this).attr('data-id');
-    accountRecharge = $(this).attr('data-account');
+    accountRecharge = $('#raccount').val();
     $('#rechargeModal').modal('show');
   })
   $('#recharge').click(function() {
@@ -27,7 +27,7 @@
   // 回退
   $('.rollback').click(function() {
     userid = $(this).attr('data-id');
-    accountBack = $(this).attr('data-account');
+    accountBack = $('#baccount').val();
     $('#rollbackModal').modal('show');
   })
   $('#rollback').click(function() {
