@@ -86,7 +86,7 @@
         </div>
         <!-- 用户名单 end -->
 
-        <div class="modal fade bs-example-modal-sm" id="rechargeModal">
+        <div class="modal fade" id="rechargeModal">
           <div class="modal-dialog modal-sm">
             <div class="modal-content">
               <div class="modal-header">
@@ -94,15 +94,24 @@
                 </button>
                 <h4 class="modal-title">充值</h4>
               </div>
-                <span>类型</span>
-                <label>
-                    <select class="form-control input-sm" name="raccount" id="raccount">
+              <div class="modal-body">
+                <div class="form-horizontal form-label-left" style="margin-top: 10px;">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" style="text-align: center;">短信类型</label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <select class="form-control input-sm" name="raccount" id="rechargeSel">
                         <option value="1">行业短信</option>
                         <option value="2">营销短信</option>
-                    </select>
-                </label>
-              <div class="modal-body">
-                <input type="text" name="recharge" class="form-control input-sm" placeholder="请输入充值数目">
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" style="text-align: center;">充值数目</label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input type="text" name="recharge" class="form-control input-sm" placeholder="请输入充值数目">
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="recharge">充值</button>
@@ -119,15 +128,24 @@
                 </button>
                 <h4 class="modal-title">回退</h4>
               </div>
-                <span>类型</span>
-                <label>
-                    <select class="form-control input-sm" name="baccount" id="baccount">
+              <div class="modal-body">
+                <div class="form-horizontal form-label-left" style="margin-top: 10px;">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" style="text-align: center;">短信类型</label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <select class="form-control input-sm" name="raccount" id="rollbackSel">
                         <option value="1">行业短信</option>
                         <option value="2">营销短信</option>
-                    </select>
-                </label>
-              <div class="modal-body">
-                <input type="text" name="rollback" class="form-control input-sm" placeholder="请输入回退数目">
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" style="text-align: center;">回退数目</label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input type="text" name="rollback" class="form-control input-sm" placeholder="请输入回退数目">
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="rollback">回退</button>

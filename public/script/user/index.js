@@ -6,13 +6,12 @@
   // 充值
   $('.recharge').click(function() {
     userid = $(this).attr('data-id');
-    accountRecharge = $('#raccount').val();
     $('#rechargeModal').modal('show');
   })
   $('#recharge').click(function() {
     var params = {
       userid: userid,
-      account: accountRecharge,
+      account: $('#rechargeSel').val(),
       recharge: $('input[name=recharge]').val()
     }
     $.post('/user/recharge', params, function(res) {
@@ -27,13 +26,12 @@
   // 回退
   $('.rollback').click(function() {
     userid = $(this).attr('data-id');
-    accountBack = $('#baccount').val();
     $('#rollbackModal').modal('show');
   })
   $('#rollback').click(function() {
     var params = {
       userid: userid,
-      account: accountBack,
+      account: $('#rollbackSel').val(),
       reback: $('input[name=rollback]').val()
     }
     $.post('/user/reback', params, function(res) {
